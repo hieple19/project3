@@ -42,6 +42,66 @@ public class Graph{
         return this.nodes;
     }
 
+    public Path shortestPath(int k1, int k2){
+        Node start = this.find(k1);
+        Node end = this.find(k2);
+        return shortestPath(start,end);
+    }
+
+    public Path shortestPath(Node start, Node end){
+        HashMap<Node, Path> allPaths = new HashMap<Node, Path>();
+        ArrayList<Node> visited = new ArrayList<Node>();
+
+        for(int i = 0; i<this.nodes.size(); i++){
+            Path newPath = new Path(start, nodes.get(i));
+            if(this.nodes.get(i) == start){
+                newPath.setLength(0);
+            }
+            else{
+                newPath.setLength(Integer.MAX_VALUE);
+            }
+            allPaths.put(nodes.get(i), newPath);
+        }
+
+        while(!allPaths.get(end).done()){
+            Node minNode = this.minNode(allPaths);
+            allPaths.get(minNode).setDone(true);
+            visited.add(minNode);
+            ArrayList<Node> neighbors = minNode.getNeighbors();
+            for(int i = 0; i< neighbors.size(); i++){
+                Node neighbor = neighbors.get(i);
+                Path currentPath = allPaths.get(neighbor);
+                int newPathLength = allPaths.get(minNode).length() + this.getEdge(minNode, neighbor).weight();
+                if(currentPath.length() > newPathLength){
+                    currentPath.updatePath(allPaths.get(minNode));
+                    currentPath.setLength(newPathLength);
+                    currentPath.route().add(neighbor);
+                }
+            }
+        }
+        return allPaths.get(end);
+    }
+
+    public Node minNode(HashMap<Node, Path> allPaths){
+        Node minNode = null; 
+
+        for(Map.Entry<Node,Path> entry: allPaths.entrySet()){
+            if(!entry.getValue().done()){
+                minNode = entry.getKey();
+                break;
+            }
+        }
+        for(Map.Entry<Node,Path> entry: allPaths.entrySet()){
+            if(!entry.getValue().done()){
+                if(entry.getValue().length() < allPaths.get(minNode).length()){
+                    minNode = entry.getKey();
+                    break;}
+            }
+        }
+
+        return minNode;
+    }
+
     public boolean addNode(int n){
         if(this.hasNode(n)){
             return false;
@@ -80,14 +140,21 @@ public class Graph{
             else{
                 Edge edgeTo1 = new Edge(node1,w);
                 node2.addEdge(edgeTo1);
-
                 Edge edgeTo2 = new Edge(node2,w);
-
                 node1.addEdge(edgeTo2);
             }
             return true;
         }
         return false;
+    }
+    
+    public Edge getEdge(int k, int a){
+        Node start = this.find(k);
+        Node end = this.find(a);
+        return this.getEdge(start,end);
+    }
+    public Edge getEdge(Node start, Node end){
+        return start.getEdge(end);
     }
 
     public ArrayList<Node> neighbors(int k){
@@ -100,7 +167,7 @@ public class Graph{
 
     public void print(){
         for(Node node: nodes){
-            System.out.println(node);
+            node.print();
         }
     }
 

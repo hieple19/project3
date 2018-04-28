@@ -12,6 +12,7 @@ public class PlayerFirst{
     private int limit;
     private Path currentPath;
     private int extraSteps;
+    
 
     public PlayerFirst(int startingNode,Graph graph){
         this.graph = graph;
@@ -81,7 +82,8 @@ public class PlayerFirst{
         this.currentPath = new Path(this.current, destination);
         this.currentPath.findLength();
     }
-
+    
+    
     public Node firstUnvisited(Node node){
         for(Node neighbor: node.getNeighbors()){
             if(!this.visited.contains(neighbor)){

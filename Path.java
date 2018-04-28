@@ -15,23 +15,25 @@ public class Path
     private int stepsLeft;
     private boolean done;
 
-    public void print(){
-        System.out.print(start.getNumber() + " to " + end.getNumber());
-        System.out.print(" Length " + this.length);
-        System.out.print(" StepsLeft " + this.stepsLeft + ", status " + this.done);
-        System.out.println();
-    }
 
     public Path(Node start, Node end){
         this.start = start;
         this.end = end;
         this.route = new ArrayList<Node>();
         this.route.add(start);
-        this.route.add(end);
+        //if(start.getNumber() != end.getNumber()){
+            //this.route.add(end);}
+        this.done = false;
     }
 
-    public void addNode(Node node){
-        this.route.add(1,node);
+    public ArrayList<Node> route() { return this.route;}
+
+    public void updatePath(Path newPath){
+        this.route.clear();
+        for(Node node: newPath.route()){
+            this.route.add(node);
+        }
+        this.length = newPath.length();
     }
 
     public void findLength(){
@@ -47,9 +49,15 @@ public class Path
 
     public int length() { return this.length;}
 
+    public void setLength(int length) {this.length = length;}
+
     public int stepsLeft() { return this.stepsLeft;}
 
     public boolean done() { return this.done;}
+
+    public void setDone(Boolean value){
+        this.done = value;
+    }
 
     public Node start() {return this.start;}
 
@@ -67,4 +75,20 @@ public class Path
     public void setStepsLeft(int stepsLeft){
         this.stepsLeft = stepsLeft;
     }
+
+    public void printPath(){
+        System.out.println("Path: ");
+        for(Node node: route){
+            System.out.print(node.getNumber() + " ");
+        }
+        System.out.println();
+    }
+
+    public void print(){
+        System.out.print(start.getNumber() + " to " + end.getNumber());
+        System.out.print(" Length " + this.length);
+        System.out.print(" StepsLeft " + this.stepsLeft + ", status " + this.done);
+        System.out.println();
+    }
+
 }

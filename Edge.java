@@ -16,4 +16,6 @@ public class Edge{
     public String toString(){
         return this.end.getNumber() + "|" + this.weight;
     }
+    
+    
 }
