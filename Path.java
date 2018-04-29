@@ -34,6 +34,7 @@ public class Path
             this.route.add(node);
         }
         this.length = newPath.length();
+        this.stepsLeft = newPath.length();
     }
 
     public void findLength(){
@@ -87,6 +88,7 @@ public class Path
     public void print(){
         System.out.print(start.getNumber() + " to " + end.getNumber());
         System.out.print(" Length " + this.length);
+        this.printPath();
         System.out.print(" StepsLeft " + this.stepsLeft + ", status " + this.done);
         System.out.println();
     }

@@ -4,24 +4,31 @@ import java.io.*;
 
 public class Graph{
     private ArrayList<Node> nodes;
+    private ArrayList<Node> exitNodes;
+    private Node startingNode;
     private int size;
+    private int limit;
 
     public Graph(){
         this.nodes = new ArrayList<Node>();
+        this.exitNodes = new ArrayList<Node>();
     }
 
     public Graph(int n){
         this.size = n;
         this.nodes = new ArrayList<Node>();
+        this.exitNodes = new ArrayList<Node>();
     }
 
-    public Graph(String fileName){
+    public Graph(String nodeFile, String exitFile){
         this.nodes = new ArrayList<Node>();
-        File file = new File(fileName);
+        this.exitNodes = new ArrayList<Node>();
+        File fileNode = new File(nodeFile);
+        File fileExit = new File(exitFile);
         try{
-            Scanner scanner = new Scanner(file);
-            while(scanner.hasNextLine()){
-                String line = scanner.nextLine();
+            Scanner scanner1 = new Scanner(fileNode);
+            while(scanner1.hasNextLine()){
+                String line = scanner1.nextLine();
                 String[] elements = line.split(" ");
                 int key1 = Integer.parseInt(elements[0]);
                 int key2 = Integer.parseInt(elements[2]);
@@ -31,6 +38,22 @@ public class Graph{
                 this.addNode(key2);
                 this.addEdge(key1,key2,weight);
             }
+
+            Scanner scanner2 = new Scanner(fileExit);
+            String line = scanner2.nextLine();
+            String[]elements = line.split(" ");
+            int starting = Integer.parseInt(elements[1]);
+            this.startingNode = this.find(starting);
+
+            line = scanner2.nextLine();
+            String[] exits = line.split(" ");
+            for(int i = 1; i<exits.length; i++){
+                Node exit = this.find(Integer.parseInt(exits[i]));
+                this.exitNodes.add(exit);
+            }
+
+            scanner1.close();
+            scanner2.close();
         }
         catch(IOException e){
             System.out.println(e);
@@ -38,17 +61,29 @@ public class Graph{
         }
     }
 
-    public ArrayList<Node> getNodes(){
-        return this.nodes;
+    public ArrayList<Node> getNodes(){        return this.nodes;    }
+    
+    public ArrayList<Node> getExitNodes(){        return this.exitNodes;    }
+    
+    public Node getStartingNode() { return this.startingNode;}
+
+    public ArrayList<Node> withinLimit(Node current){
+        ArrayList<Node> nodesWithinLimit = new ArrayList<Node>();
+        HashMap<Node, Path> shortestPaths = this.shortestPaths(current);
+        for(Map.Entry<Node,Path> entry: shortestPaths.entrySet()){
+            if(entry.getValue().length() < limit){
+                nodesWithinLimit.add(entry.getKey());
+            }
+        }
+        return nodesWithinLimit;
     }
 
-    public Path shortestPath(int k1, int k2){
-        Node start = this.find(k1);
-        Node end = this.find(k2);
-        return shortestPath(start,end);
+    public HashMap<Node,Path> shortestPaths(int key){
+        Node start = this.find(key);
+        return this.shortestPaths(start);
     }
 
-    public Path shortestPath(Node start, Node end){
+    public HashMap<Node, Path> shortestPaths(Node start){
         HashMap<Node, Path> allPaths = new HashMap<Node, Path>();
         ArrayList<Node> visited = new ArrayList<Node>();
 
@@ -63,7 +98,7 @@ public class Graph{
             allPaths.put(nodes.get(i), newPath);
         }
 
-        while(!allPaths.get(end).done()){
+        while(visited.size() < this.nodes.size()){
             Node minNode = this.minNode(allPaths);
             allPaths.get(minNode).setDone(true);
             visited.add(minNode);
@@ -79,7 +114,14 @@ public class Graph{
                 }
             }
         }
-        return allPaths.get(end);
+        return allPaths;
+    }
+
+    public Path shortestPath(int start, int end){
+        Node startNode = this.find(start);
+        Node endNode = this.find(end);
+        HashMap<Node, Path> allPaths = this.shortestPaths(start);
+        return allPaths.get(endNode);
     }
 
     public Node minNode(HashMap<Node, Path> allPaths){
@@ -120,6 +162,16 @@ public class Graph{
         return false;
     }
 
+    public boolean exitWithinNode(Node current){
+        ArrayList<Node> nodes = this.withinLimit(current);
+        for(Node node: exitNodes){
+            if(nodes.contains(node)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Node find(int k){
         for(Node node: nodes){
             if(node.getNumber() == k){
@@ -147,12 +199,13 @@ public class Graph{
         }
         return false;
     }
-    
+
     public Edge getEdge(int k, int a){
         Node start = this.find(k);
         Node end = this.find(a);
         return this.getEdge(start,end);
     }
+
     public Edge getEdge(Node start, Node end){
         return start.getEdge(end);
     }
@@ -169,6 +222,10 @@ public class Graph{
         for(Node node: nodes){
             node.print();
         }
+        for(Node node: this.exitNodes){
+            System.out.println("Exit Node " + node);
+        }
+        System.out.println("Node " + startingNode);       
     }
 
     public int[] nodesArray(){

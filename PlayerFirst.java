@@ -5,85 +5,97 @@ import java.util.*;
  * @author (your name)
  * @version (a version number or a date)
  */
-public class PlayerFirst{
-    private Graph graph;
-    private Node current;
-    private ArrayList<Node> visited;
-    private int limit;
-    private Path currentPath;
-    private int extraSteps;
-    
+public class PlayerFirst extends Player{
+
+    public PlayerFirst(Node node, Graph graph){
+        super(node, graph);
+    }
 
     public PlayerFirst(int startingNode,Graph graph){
-        this.graph = graph;
-        this.current = this.graph.find(startingNode);
-        this.visited = new ArrayList<Node>();
-        this.visited.add(current);
-        this.newPath();
-        this.current.print();
+        super(startingNode, graph);
     }
 
     public void oneStep(){
-        System.out.println("STEP");
-        if(!checkFinished()){
+        if(!this.checkExit()){
+            System.out.println("STEP");
             int stepsToTake = this.rollDice() + this.extraSteps;
 
             this.traversePath(stepsToTake);
             while(this.extraSteps > 0){
-                if(checkFinished()){
-                    break;
-                }
-                this.newPath();
+                if(this.currentPath.done()){
+                    this.newPath();}
                 this.traversePath(this.extraSteps);
             }
+            this.checkExit();
             this.print();
             System.out.println();
         }
         else{
-            System.out.println("Done");
-            System.out.println(visited);
+            System.out.println("Exited Maze");
         }
 
-    }
-
-    public int rollDice(){
-        Random random = new Random(123);
-        int steps = random.nextInt(9) + 1;
-        return steps;
     }
 
     public void traversePath(int steps){
-        if(!checkFinished()){
-            System.out.println("Path to Traverse");
-            System.out.println("extraSteps " + this.extraSteps);
-            System.out.println("No. of steps " + steps);
-            this.currentPath.print();
-            System.out.println();
-            if(currentPath.checkDone(steps)){
-                if(steps>currentPath.stepsLeft()){
-                    this.extraSteps = steps - currentPath.stepsLeft();
-                }
-                this.current = this.currentPath.end();
-                this.visited.add(currentPath.end());
+        /*System.out.println("Path to Traverse");
+        System.out.println("extraSteps " + this.extraSteps);
+        System.out.println("No. of steps " + steps);
+        this.currentPath.print();
+        System.out.println();*/
+        if(currentPath.checkDone(steps)){
+            if(steps>currentPath.stepsLeft()){
+                this.extraSteps = steps - currentPath.stepsLeft();
             }
-            else{
-                int stepsLeftOnPath = this.currentPath.stepsLeft() - steps;
-                currentPath.setStepsLeft(stepsLeftOnPath);
-                this.extraSteps = 0;
-            }}
+            this.current = this.currentPath.end();
+            this.visited.add(currentPath.end());
+        }
+        else{
+            int stepsLeftOnPath = this.currentPath.stepsLeft() - steps;
+            currentPath.setStepsLeft(stepsLeftOnPath);
+            this.extraSteps = 0;
+        }
     }
 
     public void newPath(){
-        while(this.deadEnd(this.current)){
+        if(this.deadEnd(this.current)){
             int currentIndex = this.visited.indexOf(current);
-            this.current = this.visited.get(currentIndex - 1);
+            System.out.println("Current " + current);
+            Node previous = this.visited.get(currentIndex -1);
+            this.currentPath = new Path(this.current, previous);
         }
-        Node destination = this.firstUnvisited(this.current);  
-        this.currentPath = new Path(this.current, destination);
-        this.currentPath.findLength();
+        else if(this.checkExitInRange()){
+            HashMap<Node, Path> allPaths = this.graph.shortestPaths(this.current);
+            this.currentPath = allPaths.get(this.exitNodesInRange.get(0));
+            for(Node node: exitNodesInRange){
+                if(allPaths.get(node).length() < this.currentPath.length()){
+                    this.currentPath = allPaths.get(node);
+                }
+            }
+        }
+        else{
+            Node destination = this.firstUnvisited(this.current);  
+            this.currentPath = new Path(this.current, destination);
+            this.currentPath.findLength();
+        }
     }
-    
-    
+
+    public boolean checkExitInRange(){
+        ArrayList<Node> nodes = this.graph.withinLimit(current);
+
+        for(Node node: nodes){
+            if(this.graph.getExitNodes().contains(node)){
+                this.exitNodesInRange.add(node);
+            }
+        }
+
+        if(this.exitNodesInRange.size() == 0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
     public Node firstUnvisited(Node node){
         for(Node neighbor: node.getNeighbors()){
             if(!this.visited.contains(neighbor)){
@@ -102,6 +114,14 @@ public class PlayerFirst{
         return true;
     }
 
+    public boolean checkExit(){
+        if(this.graph.getExitNodes().contains(this.current)){
+            this.exitMaze = true;
+            return true;
+        }
+        return false;
+    }
+
     public void print(){
         System.out.println("Current " + this.current.getNumber());
         System.out.print("Path ");
@@ -109,6 +129,6 @@ public class PlayerFirst{
     }
 
     public boolean checkFinished(){
-        return this.visited.size() == 6;
+        return this.visited.size() == this.graph.getNodes().size();
     }
 }
