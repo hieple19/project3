@@ -65,15 +65,22 @@ public class Path
         return result;
     }
 
+    public Node nextNode(){
+        if(this.route.size() > 1){
+            int indexCurrent = this.route.indexOf(this.current);
+            return this.route.get(indexCurrent +1);}
+        return this.start;
+    }
+
     public void updateDistanceNextNode(){
         /*if(!this.current.equals(this.end)){
-            int indexCurrent = this.route.indexOf(current);
-            System.out.println(this.current);
-            System.out.println(indexCurrent);
-            Node next = this.route.get(indexCurrent + 1);
-            int currentEdge = this.current.getEdge(next).weight();
-            int distanceTravelledCurrentEdge = this.lengthTravelled - this.lengthToCurrentNode();
-            this.distanceToNextNode = currentEdge - distanceTravelledCurrentEdge;
+        int indexCurrent = this.route.indexOf(current);
+        System.out.println(this.current);
+        System.out.println(indexCurrent);
+        Node next = this.route.get(indexCurrent + 1);
+        int currentEdge = this.current.getEdge(next).weight();
+        int distanceTravelledCurrentEdge = this.lengthTravelled - this.lengthToCurrentNode();
+        this.distanceToNextNode = currentEdge - distanceTravelledCurrentEdge;
         }*/
         if(!this.current.equals(this.end)){
             this.distanceToNextNode = this.lengthToNextNode() - this.lengthTravelled;
@@ -125,15 +132,15 @@ public class Path
     }
 
     public void print(){
-        System.out.print(start.getNumber() + " to " + end.getNumber());
-        System.out.print(", Length: " + this.length);
-
-        System.out.print(", Steps Left: " + this.stepsLeft + ", done? " + this.done + " \n");
         System.out.print("Path: ");
         for(Node node: route){
             System.out.print(node.getNumber() + " ");
         }
-        System.out.print(", Distance to next node " + this.distanceToNextNode + " \n");
+        System.out.print(", Length: " + this.length);
+
+        System.out.print(", Steps Left: " + this.stepsLeft + ", done? " + this.done + " \n");
+
+        System.out.print("Distance to next node (Node " + this.nextNode().getNumber() + ") " + this.distanceToNextNode + " \n");
     }
 
 }

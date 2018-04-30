@@ -18,12 +18,12 @@ public class Graph{
         this.size = n;
         this.nodes = new ArrayList<Node>();
         this.exitNodes = new ArrayList<Node>();
+        this.limit = 100;
     }
 
     public Graph(String nodeFile, String exitFile){
         this.nodes = new ArrayList<Node>();
         this.exitNodes = new ArrayList<Node>();
-        this.limit = 10;
         File fileNode = new File(nodeFile);
         File fileExit = new File(exitFile);
         try{
@@ -41,18 +41,25 @@ public class Graph{
             }
 
             Scanner scanner2 = new Scanner(fileExit);
-            String line = scanner2.nextLine();
-            String[]elements = line.split(" ");
-            int starting = Integer.parseInt(elements[1]);
-            this.startingNode = this.find(starting);
-
-            line = scanner2.nextLine();
-            String[] exits = line.split(" ");
-            for(int i = 1; i<exits.length; i++){
-                Node exit = this.find(Integer.parseInt(exits[i]));
-                this.exitNodes.add(exit);
+            while(scanner2.hasNextLine()){
+                String line = scanner2.nextLine();
+                if(line.startsWith("start")){
+                    String[]elements = line.split(" ");
+                    int starting = Integer.parseInt(elements[1]);
+                    this.startingNode = this.find(starting);
+                }
+                if(line.startsWith("exit")){
+                    String[] exits = line.split(" ");
+                    for(int i = 1; i<exits.length; i++){
+                        Node exit = this.find(Integer.parseInt(exits[i]));
+                        this.exitNodes.add(exit);
+                    }
+                }
+                if(line.startsWith("limit")){
+                    String[]elements = line.split(" ");
+                    this.limit = Integer.parseInt(elements[1]);
+                }
             }
-
             scanner1.close();
             scanner2.close();
         }
@@ -63,16 +70,16 @@ public class Graph{
     }
 
     public ArrayList<Node> getNodes(){        return this.nodes;    }
-    
+
     public ArrayList<Node> getExitNodes(){        return this.exitNodes;    }
-    
+
     public Node getStartingNode() { return this.startingNode;}
 
     public ArrayList<Node> withinLimit(Node current){
         ArrayList<Node> nodesWithinLimit = new ArrayList<Node>();
         HashMap<Node, Path> shortestPaths = this.shortestPaths(current);
         for(Map.Entry<Node,Path> entry: shortestPaths.entrySet()){
-            if(entry.getValue().length() < limit){
+            if(entry.getValue().length() <= limit){
                 nodesWithinLimit.add(entry.getKey());
             }
         }
@@ -119,11 +126,15 @@ public class Graph{
         return allPaths;
     }
 
+    public Path shortestPath(Node start, Node end){
+        HashMap<Node, Path> allPaths = this.shortestPaths(start);
+        return allPaths.get(end);
+    }
+
     public Path shortestPath(int start, int end){
         Node startNode = this.find(start);
         Node endNode = this.find(end);
-        HashMap<Node, Path> allPaths = this.shortestPaths(start);
-        return allPaths.get(endNode);
+        return shortestPath(startNode, endNode);
     }
 
     public Node minNode(HashMap<Node, Path> allPaths){
@@ -227,7 +238,8 @@ public class Graph{
         for(Node node: this.exitNodes){
             System.out.println("Exit Node " + node);
         }
-        System.out.println("Node " + startingNode);       
+        System.out.println("Node " + startingNode);      
+        System.out.println("Limit " + this.limit);
     }
 
     public int[] nodesArray(){
