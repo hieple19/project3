@@ -14,19 +14,24 @@ public class Path
     private int length;
     private int stepsLeft;
     private boolean done;
-
+    private int distanceToNextNode;
+    private int lengthTravelled;
+    private Node current;
 
     public Path(Node start, Node end){
         this.start = start;
         this.end = end;
+        this.current = start;
         this.route = new ArrayList<Node>();
         this.route.add(start);
-        //if(start.getNumber() != end.getNumber()){
-            //this.route.add(end);}
+        if(start.getNumber() != end.getNumber()){
+            this.route.add(end);}
         this.done = false;
     }
 
     public ArrayList<Node> route() { return this.route;}
+
+    public Node current() { return this.current;}
 
     public void updatePath(Path newPath){
         this.route.clear();
@@ -35,6 +40,48 @@ public class Path
         }
         this.length = newPath.length();
         this.stepsLeft = newPath.length();
+        //this.findLength();
+    }
+
+    public void updatePositionOnPath(){
+        this.lengthTravelled = this.length - this.stepsLeft;
+        if(this.lengthTravelled >= this.lengthToNextNode()){
+            int indexCurrent = this.route.indexOf(current);
+            Node next = this.route.get(indexCurrent + 1);
+            this.current = next;
+        }
+
+    }
+
+    public int lengthToNextNode(){
+        int result = 0;
+        int indexCurrent = this.route.indexOf(this.current);
+
+        for(int i = 0; i<=indexCurrent; i++){
+            Node start = this.route.get(i);
+            Node end = this.route.get(i+1);
+            result += start.getEdge(end).weight();
+        }
+        return result;
+    }
+
+    public void updateDistanceNextNode(){
+        /*if(!this.current.equals(this.end)){
+            int indexCurrent = this.route.indexOf(current);
+            System.out.println(this.current);
+            System.out.println(indexCurrent);
+            Node next = this.route.get(indexCurrent + 1);
+            int currentEdge = this.current.getEdge(next).weight();
+            int distanceTravelledCurrentEdge = this.lengthTravelled - this.lengthToCurrentNode();
+            this.distanceToNextNode = currentEdge - distanceTravelledCurrentEdge;
+        }*/
+        if(!this.current.equals(this.end)){
+            this.distanceToNextNode = this.lengthToNextNode() - this.lengthTravelled;
+        }
+        else{
+            this.distanceToNextNode = this.stepsLeft;
+            System.out.println("Running");
+        }
     }
 
     public void findLength(){
@@ -77,20 +124,16 @@ public class Path
         this.stepsLeft = stepsLeft;
     }
 
-    public void printPath(){
-        System.out.println("Path: ");
+    public void print(){
+        System.out.print(start.getNumber() + " to " + end.getNumber());
+        System.out.print(", Length: " + this.length);
+
+        System.out.print(", Steps Left: " + this.stepsLeft + ", done? " + this.done + " \n");
+        System.out.print("Path: ");
         for(Node node: route){
             System.out.print(node.getNumber() + " ");
         }
-        System.out.println();
-    }
-
-    public void print(){
-        System.out.print(start.getNumber() + " to " + end.getNumber());
-        System.out.print(" Length " + this.length);
-        this.printPath();
-        System.out.print(" StepsLeft " + this.stepsLeft + ", status " + this.done);
-        System.out.println();
+        System.out.print(", Distance to next node " + this.distanceToNextNode + " \n");
     }
 
 }

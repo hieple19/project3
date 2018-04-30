@@ -5,9 +5,10 @@ public class Controller{
         Graph graph = new Graph("example.txt","example2.txt");
         Game game = new Game(graph);
         graph.print();
+        System.out.println("Playing ");
         PlayerFirst player1 = new PlayerFirst(graph.getStartingNode(),graph);
 
-        /*HashMap<Node, Path> allPaths = graph.shortestPaths(3);
+        HashMap<Node, Path> allPaths = graph.shortestPaths(6);
         Set<Map.Entry<Node,Path>> entries = allPaths.entrySet();
         Iterator itr = entries.iterator();
         System.out.println();
@@ -16,13 +17,15 @@ public class Controller{
             Node entry = (Node)next.getKey();
             Path path = (Path) next.getValue();
             entry.print();
-            path.printPath();
             path.print();
             System.out.println();
 
-        }*/
-        player1.oneStep();
-        player1.oneStep();
+        }
+        System.out.println("PLAYERS");
+        for(int i = 0; i<7; i++){
+            System.out.println("STEP " + i);
+            player1.oneStep();
+        }
 
     }
 }

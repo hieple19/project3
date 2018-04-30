@@ -15,6 +15,7 @@ public class Player
     protected Path currentPath;
     protected int extraSteps;
     protected boolean exitMaze;
+    protected Random random = new Random(4345);
 
     public Player(Node startingNode, Graph graph){
         this.graph = graph;
@@ -58,8 +59,7 @@ public class Player
     }
 
     public int rollDice(){
-        Random random = new Random(123);
-        int steps = random.nextInt(9) + 1;
+        int steps = random.nextInt(6) + 1;
         return steps;
     }
 

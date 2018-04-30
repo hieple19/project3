@@ -23,6 +23,7 @@ public class Graph{
     public Graph(String nodeFile, String exitFile){
         this.nodes = new ArrayList<Node>();
         this.exitNodes = new ArrayList<Node>();
+        this.limit = 10;
         File fileNode = new File(nodeFile);
         File fileExit = new File(exitFile);
         try{
@@ -112,6 +113,7 @@ public class Graph{
                     currentPath.setLength(newPathLength);
                     currentPath.route().add(neighbor);
                 }
+                currentPath.findLength();
             }
         }
         return allPaths;

@@ -17,17 +17,23 @@ public class PlayerFirst extends Player{
 
     public void oneStep(){
         if(!this.checkExit()){
-            System.out.println("STEP");
-            int stepsToTake = this.rollDice() + this.extraSteps;
-
+            int stepsToTake = this.rollDice();
+            System.out.println("Dice rolled " + stepsToTake);
             this.traversePath(stepsToTake);
-            while(this.extraSteps > 0){
-                if(this.currentPath.done()){
-                    this.newPath();}
+            while(this.extraSteps > 0 && !this.exitMaze){
+                this.newPath();
+                System.out.println("extra steps " + extraSteps);
                 this.traversePath(this.extraSteps);
+
             }
-            this.checkExit();
+
+            if(!this.exitMaze && this.currentPath.done()){
+                this.newPath();
+            }
+            System.out.println();
+            System.out.println("Printing Info at end of steps");
             this.print();
+            System.out.println("Ending info");
             System.out.println();
         }
         else{
@@ -37,46 +43,58 @@ public class PlayerFirst extends Player{
     }
 
     public void traversePath(int steps){
-        /*System.out.println("Path to Traverse");
-        System.out.println("extraSteps " + this.extraSteps);
-        System.out.println("No. of steps " + steps);
-        this.currentPath.print();
-        System.out.println();*/
         if(currentPath.checkDone(steps)){
             if(steps>currentPath.stepsLeft()){
                 this.extraSteps = steps - currentPath.stepsLeft();
             }
             this.current = this.currentPath.end();
             this.visited.add(currentPath.end());
+            currentPath.setStepsLeft(0);
         }
         else{
+            //System.out.println("Traversing path not done");
             int stepsLeftOnPath = this.currentPath.stepsLeft() - steps;
-            currentPath.setStepsLeft(stepsLeftOnPath);
+            //System.out.println("stepsLeftOnPath " + stepsLeftOnPath);
+            this.currentPath.setStepsLeft(stepsLeftOnPath);
+            this.currentPath.updatePositionOnPath();
+            this.currentPath.updateDistanceNextNode();
+            this.current = this.currentPath.current();
+            if(!this.visited.contains(this.current)){
+                this.visited.add(this.current);
+            }
             this.extraSteps = 0;
         }
+        this.checkExit();
     }
 
     public void newPath(){
         if(this.deadEnd(this.current)){
             int currentIndex = this.visited.indexOf(current);
-            System.out.println("Current " + current);
             Node previous = this.visited.get(currentIndex -1);
             this.currentPath = new Path(this.current, previous);
+            this.currentPath.findLength();
         }
         else if(this.checkExitInRange()){
-            HashMap<Node, Path> allPaths = this.graph.shortestPaths(this.current);
-            this.currentPath = allPaths.get(this.exitNodesInRange.get(0));
-            for(Node node: exitNodesInRange){
-                if(allPaths.get(node).length() < this.currentPath.length()){
-                    this.currentPath = allPaths.get(node);
-                }
-            }
+            this.currentPath = this.pathToNearestExit();
+            this.currentPath.findLength();
+            this.currentPath.setDone(false);
         }
         else{
             Node destination = this.firstUnvisited(this.current);  
             this.currentPath = new Path(this.current, destination);
             this.currentPath.findLength();
         }
+    }
+
+    public Path pathToNearestExit(){
+        HashMap<Node, Path> allPaths = this.graph.shortestPaths(this.current);
+        Path result = allPaths.get(this.exitNodesInRange.get(0));
+        for(Node node: exitNodesInRange){
+            if(allPaths.get(node).length() < result.length()){
+                result = allPaths.get(node);
+            }
+        }
+        return result;
     }
 
     public boolean checkExitInRange(){
@@ -123,12 +141,12 @@ public class PlayerFirst extends Player{
     }
 
     public void print(){
-        System.out.println("Current " + this.current.getNumber());
-        System.out.print("Path ");
-        this.currentPath.print();
-    }
-
-    public boolean checkFinished(){
-        return this.visited.size() == this.graph.getNodes().size();
+        if(!this.exitMaze){
+            System.out.println("Current " + this.current.getNumber());
+            System.out.print("Path ");
+            this.currentPath.print();}
+        else{
+            System.out.println("Exited");
+        }
     }
 }
