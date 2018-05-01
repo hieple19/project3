@@ -132,7 +132,7 @@ public class Path
     }
 
     public void print(){
-        System.out.print("Path: ");
+        System.out.print("Curren path: ");
         for(Node node: route){
             System.out.print(node.getNumber() + " ");
         }

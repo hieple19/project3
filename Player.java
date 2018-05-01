@@ -5,17 +5,18 @@ import java.util.*;
  * @author (your name)
  * @version (a version number or a date)
  */
-public abstract class Player
+public abstract class Player implements Comparable
 {
     protected Graph graph;
     protected Node current;
     protected ArrayList<Node> visited;
     protected ArrayList<Node> exitNodesInRange;
-    protected int limit;
     protected Path currentPath;
     protected int extraSteps;
     protected boolean exitMaze;
-    protected Random random = new Random(4345);
+    protected Dice dice;
+    protected int totalRounds;
+    protected int totalSteps;
 
     public Player(Node startingNode, Graph graph){
         this.graph = graph;
@@ -37,9 +38,13 @@ public abstract class Player
         this.exitMaze = false;
     }
 
+    public void setDice(Dice dice) {this.dice = dice;}
+
     public void oneStep(){
         if(!this.checkExit()){
-            int stepsToTake = this.rollDice();
+            this.totalRounds++;
+            int stepsToTake = this.dice.rollDice();
+            this.totalSteps += stepsToTake;
             System.out.println("Dice rolled " + stepsToTake);
             this.traversePath(stepsToTake);
             while(this.extraSteps > 0 && !this.exitMaze){
@@ -109,10 +114,7 @@ public abstract class Player
         return true;
     }
 
-    public int rollDice(){
-        int steps = random.nextInt(6) + 1;
-        return steps;
-    }
+    public boolean exit(){ return this.exitMaze;}
 
     public abstract Node findNext(Node node);
 
@@ -156,17 +158,41 @@ public abstract class Player
 
     public void printPosition(){
         System.out.println();
-        System.out.println("Current Position");
         if(!this.exitMaze){
             System.out.println("Current Node " + this.current.getNumber());
-            System.out.println("Visited " + this.visited);
+            System.out.println("Number of nodes visited " + this.visited.size());
+            System.out.println(this.visited);
+            System.out.println("Total steps: " + this.totalSteps);
             this.currentPath.print();
         }
         else{
             System.out.println("Exited Maze");
+            System.out.println("Number of nodes visited " + this.visited.size());
+            System.out.println(this.visited);
+            System.out.println("Total steps: " + this.totalSteps);
+            System.out.println("Total rounds: " + this.totalRounds);
         }
         System.out.println("------");
         System.out.println();
     }
+
+    public int compareTo(Object o){
+        Player p = (Player) o;
+        if(this.totalRounds != p.totalRounds){
+            Integer thisCount = (Integer) this.totalRounds;
+            Integer pCount = (Integer) p.totalRounds;
+            return thisCount.compareTo(pCount);
+        }
+        if(this.totalSteps != p.totalSteps){
+            Integer thisCount = (Integer) this.totalSteps;
+            Integer pCount = (Integer) p.totalSteps;
+            return thisCount.compareTo(pCount);
+        }
+        Integer thisCount = this.visited.size();
+        Integer pCount = p.visited.size();
+        return thisCount.compareTo(pCount);
+    }
+
+    public abstract String toString();
 
 }

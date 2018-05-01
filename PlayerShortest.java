@@ -26,7 +26,7 @@ public class PlayerShortest extends Player
             Path currentNodePath = this.graph.shortestPath(current, nodesWithinLimit.get(i));
             if(currentNodePath.length() < nearestNodePath.length()){
                 nearestNodePath = currentNodePath;
-                nearestIndex = 0;
+                nearestIndex = i;
             }
         }
         return nodesWithinLimit.get(nearestIndex);
@@ -37,7 +37,8 @@ public class PlayerShortest extends Player
         this.currentPath = this.graph.shortestPath(this.current, destination);
         this.currentPath.setDone(false);
         this.currentPath.updateDistanceNextNode();
-        
+
     }
 
+    public String toString() { return "Player Type Shortest";}
 }

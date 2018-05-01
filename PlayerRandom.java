@@ -25,6 +25,9 @@ public class PlayerRandom extends Player
     public Node findNext(Node current){
         ArrayList<Node> neighbors = current.getNeighbors();
         int neighborChoice = this.chooseNextRandom.nextInt(neighbors.size());
+        while(this.visited.contains(neighbors.get(neighborChoice))){
+            neighborChoice = this.chooseNextRandom.nextInt(neighbors.size());
+        }
         System.out.println("Current " + current.getNumber() + " Neighbor Choice " + neighborChoice);
         return neighbors.get(neighborChoice);
     }
@@ -36,4 +39,5 @@ public class PlayerRandom extends Player
         this.currentPath.updateDistanceNextNode();
     }
 
+    public String toString() { return "Player Type Random";}
 }

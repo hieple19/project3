@@ -21,7 +21,8 @@ public class Graph{
         this.limit = 100;
     }
 
-    public Graph(String nodeFile, String exitFile){
+    public Graph(int limit, String nodeFile, String exitFile){
+        this.limit = limit;
         this.nodes = new ArrayList<Node>();
         this.exitNodes = new ArrayList<Node>();
         File fileNode = new File(nodeFile);
@@ -54,10 +55,6 @@ public class Graph{
                         Node exit = this.find(Integer.parseInt(exits[i]));
                         this.exitNodes.add(exit);
                     }
-                }
-                if(line.startsWith("limit")){
-                    String[]elements = line.split(" ");
-                    this.limit = Integer.parseInt(elements[1]);
                 }
             }
             scanner1.close();

@@ -32,6 +32,7 @@ public class PlayerFirst extends Player{
         this.currentPath = new Path(this.current, destination);
         this.currentPath.findLength();
         this.currentPath.updateDistanceNextNode();
-
     }
+    
+    public String toString() { return "Player Type First";}
 }
