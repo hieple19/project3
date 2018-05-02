@@ -2,12 +2,12 @@ import java.util.*;
 
 public class PlayerList{
     private ArrayList<Player> list;
-    private TreeSet<Player> exitedList;
+    private ArrayList<Player> exitedList;
     private int roundCount;
 
     public PlayerList(int noTypeFirst, int noTypeRandom, int noTypeShortest,Graph graph){
         this.list = new ArrayList<Player>();
-        this.exitedList = new TreeSet<Player>();
+        this.exitedList = new ArrayList<Player>();
         this.roundCount = 1;
         for(int i = 0; i<noTypeFirst; i++){
             PlayerFirst newPlayer = new PlayerFirst(graph.getStartingNode(), graph);
@@ -28,8 +28,9 @@ public class PlayerList{
         System.out.println();
         for(Player player: list){
             player.oneStep();
-            if(player.exitMaze){
+            if(player.exit() && !this.exitedList.contains(player)){
                 exitedList.add(player);
+                Collections.sort(this.exitedList);
             }
         }
         this.roundCount++;
@@ -58,7 +59,7 @@ public class PlayerList{
 
     public void printPosition(){
         for(Player player: list){
-            if(this.exitedList.contains(player)){
+            if(!this.exitedList.contains(player)){
                 player.printPosition();
             }
         }
@@ -67,10 +68,10 @@ public class PlayerList{
 
     public void printFinished(){
         int rank = 1;
+
         if(this.exitedList.size() != 0){
             System.out.println("List of players who successfully exited maze");
-            System.out.println();
-            for(Player player: exitedList){
+            for(Player player: this.exitedList){
                 System.out.println("RANK " + rank);
                 player.printPosition();
                 rank++;

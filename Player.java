@@ -14,6 +14,7 @@ public abstract class Player implements Comparable
     protected Path currentPath;
     protected int extraSteps;
     protected boolean exitMaze;
+    protected boolean onExitPath;
     protected Dice dice;
     protected int totalRounds;
     protected int totalSteps;
@@ -26,6 +27,7 @@ public abstract class Player implements Comparable
         this.visited.add(current);
         this.current.print();
         this.exitMaze = false;
+        this.onExitPath = false;
     }
 
     public Player(int startingNode,Graph graph){
@@ -44,6 +46,7 @@ public abstract class Player implements Comparable
         if(!this.checkExit()){
             this.totalRounds++;
             int stepsToTake = this.dice.rollDice();
+            System.out.println(stepsToTake);
             this.totalSteps += stepsToTake;
             System.out.println("Dice rolled " + stepsToTake);
             this.traversePath(stepsToTake);
@@ -71,6 +74,7 @@ public abstract class Player implements Comparable
             this.currentPath.updateDistanceNextNode();
         }
         else if(this.checkExitInRange()){
+            System.out.println("Round 3");
             this.currentPath = this.pathToNearestExit();
             this.currentPath.findLength();
             this.currentPath.setDone(false);
@@ -83,23 +87,31 @@ public abstract class Player implements Comparable
     }
 
     public void traversePath(int steps){
-        if(currentPath.checkDone(steps)){
-            if(steps>currentPath.stepsLeft()){
-                this.extraSteps = steps - currentPath.stepsLeft();
+        if(steps >= this.currentPath.stepsLeft()){
+            this.extraSteps = steps - this.currentPath.stepsLeft();
+            for(Node toAdd: currentPath.pathAfterCurrent()){
+                this.visited.add(toAdd);
             }
             this.current = this.currentPath.end();
-            this.visited.add(currentPath.end());
-            currentPath.setStepsLeft(0);
+            this.currentPath.setStepsLeft(0);
+            this.currentPath.setDone(true);
         }
         else{
             int stepsLeftOnPath = this.currentPath.stepsLeft() - steps;
             this.currentPath.setStepsLeft(stepsLeftOnPath);
             this.currentPath.updatePositionOnPath();
             this.currentPath.updateDistanceNextNode();
-            this.current = this.currentPath.current();
-            if(!this.visited.contains(this.current)){
-                this.visited.add(this.current);
+            if(this.current.getNumber() != this.currentPath.current().getNumber()){
+                System.out.println("Checking RUNING");
+                this.visited.add(this.currentPath.current());
+                this.current = this.currentPath.current();
+                if(checkExitInRange()){
+                    this.extraSteps = steps - this.currentPath.lengthToPrevNode();
+                    return;
+                }
+
             }
+           
             this.extraSteps = 0;
         }
         this.checkExit();
@@ -166,10 +178,10 @@ public abstract class Player implements Comparable
             this.currentPath.print();
         }
         else{
-            System.out.println("Exited Maze");
+            System.out.println(this + " Exited Maze");
             System.out.println("Number of nodes visited " + this.visited.size());
             System.out.println(this.visited);
-            System.out.println("Total steps: " + this.totalSteps);
+            System.out.println("Total steps: " + (this.totalSteps-this.extraSteps));
             System.out.println("Total rounds: " + this.totalRounds);
         }
         System.out.println("------");
@@ -183,10 +195,10 @@ public abstract class Player implements Comparable
             Integer pCount = (Integer) p.totalRounds;
             return thisCount.compareTo(pCount);
         }
-        if(this.totalSteps != p.totalSteps){
-            Integer thisCount = (Integer) this.totalSteps;
-            Integer pCount = (Integer) p.totalSteps;
-            return thisCount.compareTo(pCount);
+        Integer stepCountThis = (Integer) (this.totalSteps - this.extraSteps);
+        Integer stepCountP = (Integer) (p.totalSteps - p.extraSteps);
+        if(stepCountThis != stepCountP){
+            return stepCountThis.compareTo(stepCountP);
         }
         Integer thisCount = this.visited.size();
         Integer pCount = p.visited.size();

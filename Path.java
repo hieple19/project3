@@ -33,6 +33,15 @@ public class Path
 
     public Node current() { return this.current;}
 
+    public ArrayList<Node> pathAfterCurrent(){
+        ArrayList<Node> result = new ArrayList<Node>();
+        int indexCurrent = this.route.indexOf(this.current);
+        for(int i = indexCurrent+1; i<this.route.size(); i++){
+            result.add(route.get(i));
+        }
+        return result;
+    }
+
     public void updatePath(Path newPath){
         this.route.clear();
         for(Node node: newPath.route()){
@@ -65,6 +74,15 @@ public class Path
         return result;
     }
 
+    public int lengthToPrevNode(){
+        int indexCurrent = this.route.indexOf(this.current);
+        if(indexCurrent != 0){
+            Node prev = this.route.get(indexCurrent - 1);
+            return this.current.getEdge(prev).weight();
+        }
+        return 0;
+    }
+
     public Node nextNode(){
         if(this.route.size() > 1){
             int indexCurrent = this.route.indexOf(this.current);
@@ -73,21 +91,11 @@ public class Path
     }
 
     public void updateDistanceNextNode(){
-        /*if(!this.current.equals(this.end)){
-        int indexCurrent = this.route.indexOf(current);
-        System.out.println(this.current);
-        System.out.println(indexCurrent);
-        Node next = this.route.get(indexCurrent + 1);
-        int currentEdge = this.current.getEdge(next).weight();
-        int distanceTravelledCurrentEdge = this.lengthTravelled - this.lengthToCurrentNode();
-        this.distanceToNextNode = currentEdge - distanceTravelledCurrentEdge;
-        }*/
         if(!this.current.equals(this.end)){
             this.distanceToNextNode = this.lengthToNextNode() - this.lengthTravelled;
         }
         else{
             this.distanceToNextNode = this.stepsLeft;
-            System.out.println("Running");
         }
     }
 
@@ -118,21 +126,12 @@ public class Path
 
     public Node end() { return this.end;}
 
-    public boolean checkDone(int steps){
-        int afterTraversal = stepsLeft - steps;
-        if(afterTraversal<= 0){
-            this.done = true;
-            return true;
-        }
-        return false;
-    }
-
     public void setStepsLeft(int stepsLeft){
         this.stepsLeft = stepsLeft;
     }
 
     public void print(){
-        System.out.print("Curren path: ");
+        System.out.print("Current path: ");
         for(Node node: route){
             System.out.print(node.getNumber() + " ");
         }

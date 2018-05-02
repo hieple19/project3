@@ -14,17 +14,22 @@ public class PlayerRandom extends Player
         super(startingNode, graph);
         this.chooseNextRandom = new Random();
         this.newPath();
+        this.currentPath.print();
     }
 
     public PlayerRandom(Node startingNode, Graph graph){
         super(startingNode, graph);
         this.chooseNextRandom = new Random();
         this.newPath();
+        this.currentPath.print();
     }
 
     public Node findNext(Node current){
         ArrayList<Node> neighbors = current.getNeighbors();
+        System.out.println(neighbors);
+
         int neighborChoice = this.chooseNextRandom.nextInt(neighbors.size());
+
         while(this.visited.contains(neighbors.get(neighborChoice))){
             neighborChoice = this.chooseNextRandom.nextInt(neighbors.size());
         }

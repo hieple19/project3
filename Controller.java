@@ -27,9 +27,10 @@ public class Controller{
         System.out.println("STEP " + (i+1));
         player1.oneStep();
         }*/
-        Graph graph = new Graph(10,"test.txt","example2.txt");
-        Dice dice = new Dice(10, 123);
-        PlayerList playerList = new PlayerList(1,0,0,graph);
+        Graph graph = new Graph(10,"example7.txt","config7.txt");
+        //Dice dice = new Dice(6, 123);
+        Dice dice = new Dice(6);
+        PlayerList playerList = new PlayerList(1,1,1,graph);
         playerList.setDice(dice);
 
         Scanner scanner = new Scanner(System.in);
