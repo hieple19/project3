@@ -18,8 +18,8 @@ public class PlayerFirst extends Player{
         this.newPath();
     }
 
-    public Node findNext(Node current){
-        for(Node neighbor: current.getNeighbors()){
+    public Node findNext(){
+        for(Node neighbor: this.current.getNeighbors()){
             if(!this.visited.contains(neighbor)){
                 return neighbor;
             }
@@ -28,7 +28,7 @@ public class PlayerFirst extends Player{
     }
 
     public void updateNewPath(){
-        Node destination = this.findNext(this.current);  
+        Node destination = this.findNext();  
         this.currentPath = new Path(this.current, destination);
         this.currentPath.findLength();
         this.currentPath.updateDistanceNextNode();

@@ -40,7 +40,65 @@ public abstract class Player implements Comparable
         this.exitMaze = false;
     }
 
+    public abstract Node findNext();
+
+    public abstract void updateNewPath();
+
     public void setDice(Dice dice) {this.dice = dice;}
+
+    public boolean exit(){ return this.exitMaze;}
+
+    public void addVisited(Node node) {this.visited.add(node);}
+
+    public void setCurrent(Node node) {this.current = node;}
+
+    public boolean checkExit(){
+        if(this.graph.getExitNodes().values().contains(this.current)){
+            this.exitMaze = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deadEnd(){
+        for(Node neighbor: this.current.getNeighbors()){
+            if(!this.visited.contains(neighbor)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkExitInRange(){
+        HashMap<Integer,Node> nodesWithinLimit = this.graph.withinLimit(this.current);
+
+        for(Node node: nodesWithinLimit.values()){
+            if(this.graph.getExitNodes().containsValue(node)){
+                this.exitNodesInRange.add(node);
+            }
+        }
+
+        if(this.exitNodesInRange.size() == 0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    public Path pathToNearestExit(){
+        if(this.exitNodesInRange.size() > 0){
+            HashMap<Node, Path> allPaths = this.graph.shortestPaths(this.current);
+            Path result = allPaths.get(this.exitNodesInRange.get(0));
+            for(Node node: exitNodesInRange){
+                if(allPaths.get(node).length() < result.length()){
+                    result = allPaths.get(node);
+                }
+            }
+            return result;
+        }
+        return null;
+    }
 
     public void oneStep(){
         if(!this.checkExit()){
@@ -66,7 +124,7 @@ public abstract class Player implements Comparable
     }
 
     public void newPath(){
-        if(this.deadEnd(this.current)){
+        if(this.deadEnd()){
             int currentIndex = this.visited.indexOf(current);
             Node previous = this.visited.get(currentIndex -1);
             this.currentPath = new Path(this.current, previous);
@@ -74,14 +132,12 @@ public abstract class Player implements Comparable
             this.currentPath.updateDistanceNextNode();
         }
         else if(this.checkExitInRange()){
-            System.out.println("Round 3");
             this.currentPath = this.pathToNearestExit();
             this.currentPath.findLength();
             this.currentPath.setDone(false);
             this.currentPath.updateDistanceNextNode();
         }
         else{
-            System.out.println("Checking");
             this.updateNewPath();
         }
     }
@@ -111,61 +167,10 @@ public abstract class Player implements Comparable
                 }
 
             }
-           
+
             this.extraSteps = 0;
         }
         this.checkExit();
-    }
-
-    public boolean deadEnd(Node node){
-        for(Node neighbor: node.getNeighbors()){
-            if(!this.visited.contains(neighbor)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean exit(){ return this.exitMaze;}
-
-    public abstract Node findNext(Node node);
-
-    public abstract void updateNewPath();
-
-    public boolean checkExit(){
-        if(this.graph.getExitNodes().values().contains(this.current)){
-            this.exitMaze = true;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean checkExitInRange(){
-        HashMap<Integer,Node> nodesWithinLimit = this.graph.withinLimit(current);
-
-        for(Node node: nodesWithinLimit.values()){
-            if(this.graph.getExitNodes().containsValue(node)){
-                this.exitNodesInRange.add(node);
-            }
-        }
-
-        if(this.exitNodesInRange.size() == 0){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
-    public Path pathToNearestExit(){
-        HashMap<Node, Path> allPaths = this.graph.shortestPaths(this.current);
-        Path result = allPaths.get(this.exitNodesInRange.get(0));
-        for(Node node: exitNodesInRange){
-            if(allPaths.get(node).length() < result.length()){
-                result = allPaths.get(node);
-            }
-        }
-        return result;
     }
 
     public void printPosition(){

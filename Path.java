@@ -27,7 +27,7 @@ public class Path
         if(start.getNumber() != end.getNumber()){
             this.route.add(end);}
         this.done = false;
-        //this.lengthTravelled = 0;
+        this.lengthTravelled = 0;
     }
 
     public ArrayList<Node> route() { return this.route;}
@@ -48,6 +48,8 @@ public class Path
 
     public void setStepsLeft(int stepsLeft){this.stepsLeft = stepsLeft; }
     
+    public int getLengthTravelled() {return this.lengthTravelled;}
+
     public void setLengthTravelled(int steps) { this.lengthTravelled = steps;}
 
     public int distanceToNextNode() {return this.distanceToNextNode;}
@@ -104,12 +106,12 @@ public class Path
     }
 
     public void updateDistanceNextNode(){
-        if(!this.current.equals(this.end)){
-            this.distanceToNextNode = this.totalLengthToNextNode() - this.lengthTravelled;
-        }
-        else{
-            this.distanceToNextNode = this.stepsLeft;
-        }
+        //if(!this.current.equals(this.end)){
+        this.distanceToNextNode = this.totalLengthToNextNode() - this.lengthTravelled;
+        //}
+        //else{
+        //this.distanceToNextNode = this.stepsLeft;
+        //}
     }
 
     public void updatePositionOnPath(){

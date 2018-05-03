@@ -23,6 +23,16 @@ public class PlayerList{
         }
     }
 
+    public ArrayList<Player> getPlayers() {return this.list;}
+
+    public ArrayList<Player> exitedPlayers() {return this.exitedList;}
+
+    public void setDice(Dice dice){
+        for(Player player: list){
+            player.setDice(dice);
+        }
+    }
+
     public void oneStep(){
         System.out.println("Round " + this.roundCount);
         System.out.println();
@@ -48,12 +58,6 @@ public class PlayerList{
     public void skipToCompletion(){
         while(!this.checkAllExit()){
             this.oneStep();
-        }
-    }
-
-    public void setDice(Dice dice){
-        for(Player player: list){
-            player.setDice(dice);
         }
     }
 

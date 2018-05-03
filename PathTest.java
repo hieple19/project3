@@ -123,30 +123,60 @@ public class PathTest{
         Node node1 = graph.getNode(1);
 
         Path path1 = graph.shortestPath(1,3);
-        path1.findLength();
+        //path1.findLength();
         path1.setStepsLeft(7);
         path1.updateDistanceNextNode();
         assertTrue("1 to 3", 7 == path1.distanceToNextNode());
 
         path1.setLengthTravelled(5);
         path1.updateDistanceNextNode();
+        path1.print();
         assertTrue("1 to 3", 2 == path1.distanceToNextNode());
 
         Path path2 = graph.shortestPath(5,2);
-        path2.findLength();
+        //path2.findLength();
         path2.setLengthTravelled(3);
-        path1.updateDistanceNextNode();
+        path2.updateDistanceNextNode();
         assertTrue("5 to 1 to 3 to 2", 6 == path2.distanceToNextNode());
-        
+
         path2.setCurrent(graph.getNode(1));
         path2.setLengthTravelled(10);
-        path1.updateDistanceNextNode();
+        path2.updateDistanceNextNode();
         assertTrue("5 to 2", 6 == path2.distanceToNextNode());
-        
+
         path2.setLengthTravelled(18);
         path2.setCurrent(graph.getNode(3));
-        path1.updateDistanceNextNode();
+        path2.updateDistanceNextNode();
         assertTrue("5 to 2", 3 == path2.distanceToNextNode());
+
+    }
+
+    @Test 
+    public void testUpdatePositionOnPath(){
+        Graph graph = new Graph(10,"test.txt", "testConfig.txt");  
+        Node node1 = graph.getNode(1);
+
+        Path path1 = graph.shortestPath(1,3);
+        path1.setStepsLeft(path1.length());
+        path1.updatePositionOnPath();
+        assertEquals("Start", graph.getNode(1), path1.current());
+
+        path1.setStepsLeft(0);
+        path1.updatePositionOnPath();
+        assertEquals("Traverse", graph.getNode(3), path1.current());
+
+        Path path2 = graph.shortestPath(5,2);
+        path2.setStepsLeft(11);
+        path2.updatePositionOnPath();
+        assertEquals("5 to 1 to 3 to 2", graph.getNode(1), path2.current());
+
+        path2.setStepsLeft(4);
+        path2.updatePositionOnPath();
+        assertEquals("5 to 1 to 3 to 2", graph.getNode(3), path2.current());
+
+        path2.setStepsLeft(0);
+        path2.updatePositionOnPath();
+        assertEquals("5 to 1 to 3 to 2", graph.getNode(2), path2.current());
 
     }
 

@@ -10,6 +10,13 @@ public class PlayerRandom extends Player
 {   
     private Random chooseNextRandom;
 
+    public PlayerRandom(Node startingNode, Graph graph, long seed){
+        super(startingNode, graph);
+        this.chooseNextRandom = new Random(seed);
+        this.newPath();
+        this.currentPath.print();
+    }
+
     public PlayerRandom(int startingNode, Graph graph){
         super(startingNode, graph);
         this.chooseNextRandom = new Random();
@@ -24,8 +31,8 @@ public class PlayerRandom extends Player
         this.currentPath.print();
     }
 
-    public Node findNext(Node current){
-        ArrayList<Node> neighbors = current.getNeighbors();
+    public Node findNext(){
+        ArrayList<Node> neighbors = this.current.getNeighbors();
         System.out.println(neighbors);
 
         int neighborChoice = this.chooseNextRandom.nextInt(neighbors.size());
@@ -38,7 +45,7 @@ public class PlayerRandom extends Player
     }
 
     public void updateNewPath(){
-        Node destination = this.findNext(this.current);  
+        Node destination = this.findNext();  
         this.currentPath = new Path(this.current, destination);
         this.currentPath.findLength();
         this.currentPath.updateDistanceNextNode();
