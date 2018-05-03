@@ -32,7 +32,7 @@ public abstract class Player implements Comparable
 
     public Player(int startingNode,Graph graph){
         this.graph = graph;
-        this.current = this.graph.find(startingNode);
+        this.current = this.graph.getNodes().get(startingNode);
         this.visited = new ArrayList<Node>();
         this.exitNodesInRange = new ArrayList<Node>();
         this.visited.add(current);
@@ -133,7 +133,7 @@ public abstract class Player implements Comparable
     public abstract void updateNewPath();
 
     public boolean checkExit(){
-        if(this.graph.getExitNodes().contains(this.current)){
+        if(this.graph.getExitNodes().values().contains(this.current)){
             this.exitMaze = true;
             return true;
         }
@@ -141,10 +141,10 @@ public abstract class Player implements Comparable
     }
 
     public boolean checkExitInRange(){
-        ArrayList<Node> nodes = this.graph.withinLimit(current);
+        HashMap<Integer,Node> nodesWithinLimit = this.graph.withinLimit(current);
 
-        for(Node node: nodes){
-            if(this.graph.getExitNodes().contains(node)){
+        for(Node node: nodesWithinLimit.values()){
+            if(this.graph.getExitNodes().containsValue(node)){
                 this.exitNodesInRange.add(node);
             }
         }

@@ -1,21 +1,28 @@
 import java.util.*;
 
 public class Node{
-    private int number;
+    private Integer number;
     private ArrayList<Edge> edges;
 
-    public Node(int number){
+    public Node(Integer number){
         this.number = number;
         this.edges = new ArrayList<Edge>();
     }
 
     public ArrayList<Edge> edges() { return this.edges;}
 
-    public void addEdge(Edge edge){
-        this.edges.add(edge);
+    public boolean addEdge(Edge edgeToAdd){
+        for(int i = 0; i<edges.size(); i++){
+            Edge edge = edges.get(i);
+            if(edge.end() == edgeToAdd.end()){
+                return false;
+            }
+        }
+        this.edges.add(edgeToAdd);
+        return true;
     }
 
-    public int getNumber() { return this.number;}
+    public Integer getNumber() { return this.number;}
 
     public boolean hasEdge(Node k){
         for(int i = 0; i<edges.size(); i++){
@@ -46,7 +53,7 @@ public class Node{
     }
 
     public String toString(){
-       return ""+ this.number;
+        return ""+ this.number;
     }
 
     public void print(){

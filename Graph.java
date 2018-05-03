@@ -3,28 +3,28 @@ import java.util.*;
 import java.io.*;
 
 public class Graph{
-    private ArrayList<Node> nodes;
-    private ArrayList<Node> exitNodes;
+    private HashMap<Integer,Node> nodes;
+    private HashMap<Integer,Node> exitNodes;
     private Node startingNode;
     private int size;
     private int limit;
 
     public Graph(){
-        this.nodes = new ArrayList<Node>();
-        this.exitNodes = new ArrayList<Node>();
+        this.nodes = new HashMap<Integer,Node>();
+        this.exitNodes = new HashMap<Integer,Node>();
     }
 
     public Graph(int n){
         this.size = n;
-        this.nodes = new ArrayList<Node>();
-        this.exitNodes = new ArrayList<Node>();
+        this.nodes = new HashMap<Integer,Node>();
+        this.exitNodes = new HashMap<Integer,Node>();
         this.limit = 100;
     }
 
     public Graph(int limit, String nodeFile, String exitFile){
         this.limit = limit;
-        this.nodes = new ArrayList<Node>();
-        this.exitNodes = new ArrayList<Node>();
+        this.nodes = new HashMap<Integer,Node>();
+        this.exitNodes = new HashMap<Integer,Node>();
         File fileNode = new File(nodeFile);
         File fileExit = new File(exitFile);
         try{
@@ -32,9 +32,9 @@ public class Graph{
             while(scanner1.hasNextLine()){
                 String line = scanner1.nextLine();
                 String[] elements = line.split(" ");
-                int key1 = Integer.parseInt(elements[0]);
-                int key2 = Integer.parseInt(elements[2]);
-                int weight = Integer.parseInt(elements[3]);
+                Integer key1 = Integer.parseInt(elements[0]);
+                Integer key2 = Integer.parseInt(elements[2]);
+                Integer weight = Integer.parseInt(elements[3]);
 
                 this.addNode(key1);
                 this.addNode(key2);
@@ -46,14 +46,15 @@ public class Graph{
                 String line = scanner2.nextLine();
                 if(line.startsWith("start")){
                     String[]elements = line.split(" ");
-                    int starting = Integer.parseInt(elements[1]);
-                    this.startingNode = this.find(starting);
+                    Integer starting = Integer.parseInt(elements[1]);
+                    this.startingNode = this.nodes.get(starting);
                 }
                 if(line.startsWith("exit")){
                     String[] exits = line.split(" ");
                     for(int i = 1; i<exits.length; i++){
-                        Node exit = this.find(Integer.parseInt(exits[i]));
-                        this.exitNodes.add(exit);
+                        Integer nodeNumber = Integer.parseInt(exits[i]);
+                        Node exit = this.nodes.get(nodeNumber);
+                        this.exitNodes.put(nodeNumber, exit);
                     }
                 }
             }
@@ -66,25 +67,29 @@ public class Graph{
         }
     }
 
-    //public ArrayList<Node> getNodes(){        return this.nodes;    }
+    public HashMap<Integer,Node> getNodes(){return this.nodes;    }
 
-    public ArrayList<Node> getExitNodes(){        return this.exitNodes;    }
+    public Node getNode(Integer key) {return this.nodes.get(key);}
+
+    public HashMap<Integer,Node> getExitNodes(){return this.exitNodes;    }
 
     public Node getStartingNode() { return this.startingNode;}
 
-    public ArrayList<Node> withinLimit(Node current){
-        ArrayList<Node> nodesWithinLimit = new ArrayList<Node>();
+    public HashMap<Integer,Node> withinLimit(Node current){
+        HashMap<Integer,Node> nodesWithinLimit = new HashMap<Integer,Node>();
         HashMap<Node, Path> shortestPaths = this.shortestPaths(current);
         for(Map.Entry<Node,Path> entry: shortestPaths.entrySet()){
             if(entry.getValue().length() <= limit){
-                nodesWithinLimit.add(entry.getKey());
+                Integer key = entry.getKey().getNumber();
+                nodesWithinLimit.put(key,entry.getKey());
             }
+
         }
         return nodesWithinLimit;
     }
 
-    public HashMap<Node,Path> shortestPaths(int key){
-        Node start = this.find(key);
+    public HashMap<Node,Path> shortestPaths(Integer key){
+        Node start = this.nodes.get(key);
         return this.shortestPaths(start);
     }
 
@@ -92,15 +97,16 @@ public class Graph{
         HashMap<Node, Path> allPaths = new HashMap<Node, Path>();
         ArrayList<Node> visited = new ArrayList<Node>();
 
-        for(int i = 0; i<this.nodes.size(); i++){
-            Path newPath = new Path(start, nodes.get(i));
-            if(this.nodes.get(i) == start){
+        for(Node node: this.nodes.values()){
+            System.out.println(node);
+            Path newPath = new Path(start, node);
+            if(node == start){
                 newPath.setLength(0);
             }
             else{
                 newPath.setLength(Integer.MAX_VALUE);
             }
-            allPaths.put(nodes.get(i), newPath);
+            allPaths.put(node, newPath);
         }
 
         while(visited.size() < this.nodes.size()){
@@ -128,9 +134,9 @@ public class Graph{
         return allPaths.get(end);
     }
 
-    public Path shortestPath(int start, int end){
-        Node startNode = this.find(start);
-        Node endNode = this.find(end);
+    public Path shortestPath(Integer start, Integer end){
+        Node startNode = this.nodes.get(start);
+        Node endNode = this.nodes.get(end);
         return shortestPath(startNode, endNode);
     }
 
@@ -154,55 +160,41 @@ public class Graph{
         return minNode;
     }
 
-    public boolean addNode(int n){
-        if(this.hasNode(n)){
+    public boolean addNode(Integer key){
+        if(this.nodes.containsKey(key)){
             return false;
         }
-        Node newNode = new Node(n);
-        nodes.add(newNode);
+        Node newNode = new Node(key);
+        this.nodes.put(key,newNode);
         return true;
     }
 
-    public boolean hasNode(int k){
-        for(Node node: nodes){
-            if(node.getNumber() == k){
-                return true;
-            }
-        }
-        return false;
+    public boolean hasNode(Integer key){
+        return this.nodes.containsKey(key);
     }
 
     public boolean exitWithinNode(Node current){
-        ArrayList<Node> nodes = this.withinLimit(current);
-        for(Node node: exitNodes){
-            if(nodes.contains(node)){
+        HashMap<Integer,Node> nodesWithinLimit = this.withinLimit(current);
+        for(Integer key: exitNodes.keySet()){
+            if(nodesWithinLimit.containsKey(key)){
                 return true;
             }
         }
         return false;
     }
 
-    public Node find(int k){
-        for(Node node: nodes){
-            if(node.getNumber() == k){
-                return node;
-            }
-        }
-        return null;
-    }
-
-    public boolean addEdge(int k1, int k2, int w){
-        if(this.hasNode(k1) && this.hasNode(k2)){
-            Node node1 = this.find(k1);
-            Node node2 = this.find(k2);
+    public boolean addEdge(Integer key1, Integer key2, Integer weight){
+        if(this.hasNode(key1) && this.hasNode(key2)){
+            Node node1 = this.nodes.get(key1);
+            Node node2 = this.nodes.get(key2);
             if(node1.hasEdge(node2)){
-                node1.getEdge(node2).setWeight(w);
-                node2.getEdge(node1).setWeight(w);
+                node1.getEdge(node2).setWeight(weight);
+                node2.getEdge(node1).setWeight(weight);
             }
             else{
-                Edge edgeTo1 = new Edge(node1,w);
+                Edge edgeTo1 = new Edge(node1,weight);
                 node2.addEdge(edgeTo1);
-                Edge edgeTo2 = new Edge(node2,w);
+                Edge edgeTo2 = new Edge(node2,weight);
                 node1.addEdge(edgeTo2);
             }
             return true;
@@ -210,9 +202,9 @@ public class Graph{
         return false;
     }
 
-    public Edge getEdge(int k, int a){
-        Node start = this.find(k);
-        Node end = this.find(a);
+    public Edge getEdge(Integer key1, Integer key2){
+        Node start = this.nodes.get(key1);
+        Node end = this.nodes.get(key2);
         return this.getEdge(start,end);
     }
 
@@ -220,31 +212,33 @@ public class Graph{
         return start.getEdge(end);
     }
 
-    public ArrayList<Node> neighbors(int k){
+    public ArrayList<Node> neighbors(Integer k){
         if(this.hasNode(k)){
-            Node node = this.find(k);
+            Node node = this.nodes.get(k);
             return node.getNeighbors();
         }
         return null;
     }
 
     public void print(){
-        for(Node node: nodes){
+        for(Node node: this.nodes.values()){
             node.print();
         }
-        for(Node node: this.exitNodes){
+        for(Node node: this.exitNodes.values()){
             System.out.println("Exit Node " + node);
         }
         System.out.println("Node " + startingNode);      
         System.out.println("Limit " + this.limit);
     }
 
-    public int[] nodesArray(){
-        int[] result = new int[this.nodes.size()];
-        for(int i = 0; i<result.length; i++){
-            result[i] = this.nodes.get(i).getNumber();
+    public Integer[] nodesArray(){
+        Integer[] results = new Integer[this.nodes.size()];
+        int i = 0;
+        for(Integer key: this.nodes.keySet()){
+            results[i] = key;
+            i++;
         }
-        return result;
+        return results;
     }
 }
 

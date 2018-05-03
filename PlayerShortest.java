@@ -13,23 +13,24 @@ public class PlayerShortest extends Player
     }
 
     public Node findNext(Node current){
-        ArrayList<Node> nodesWithinLimit = this.graph.withinLimit(current);
+        HashMap<Integer,Node> nodesWithinLimit = this.graph.withinLimit(current);
 
         for(Node node: this.visited){
-            nodesWithinLimit.remove(node);
+            nodesWithinLimit.remove(node.getNumber(),node);
         }
-        System.out.println("Finding nodes within");
-        System.out.println(nodesWithinLimit);
-        Path nearestNodePath = this.graph.shortestPath(current,nodesWithinLimit.get(0));
-        int nearestIndex = 0;
-        for(int i = 1; i<nodesWithinLimit.size(); i++){
-            Path currentNodePath = this.graph.shortestPath(current, nodesWithinLimit.get(i));
+        int index = nodesWithinLimit.keySet().iterator().next();
+        /*int nearestIndex;
+        for(Node node: nodesWithinLimit.values()){
+            node = */
+        Path nearestNodePath = this.graph.shortestPath(current,nodesWithinLimit.get(index));
+        for(Node node: nodesWithinLimit.values()){
+            Path currentNodePath = this.graph.shortestPath(current, node);
             if(currentNodePath.length() < nearestNodePath.length()){
                 nearestNodePath = currentNodePath;
-                nearestIndex = i;
+                index = node.getNumber();
             }
         }
-        return nodesWithinLimit.get(nearestIndex);
+        return nodesWithinLimit.get(index);
     } 
 
     public void updateNewPath(){
