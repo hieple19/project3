@@ -1,7 +1,8 @@
 import java.util.*;
 
 /**
- * Write a description of class Player here.
+ * Class PlayerFirst extends the player class and uses the algorithm
+ * that chooses the first neighbor of the current node
  *
  * @author HiepLe
  * @version (a version number or a date)

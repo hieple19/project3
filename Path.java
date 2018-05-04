@@ -1,23 +1,35 @@
 import java.util.*;
 
 /**
- * Write a description of class Path here.
+ * Class Path contains information about a particular path
+ * and the route of the path as well as its distance
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Hiep Le
+ * @version 05/04/2018
  */
 public class Path
-{
+{   
+    /**
+     * Class has instance variables that keep track of the 
+     * start, end and current nodes. It also has instance variable to
+     * keep track of the route in the form of a list of nodes
+     * There are other int variables that records the length of the path and
+     * the number of steps left to traverse
+     * 
+     */
     private Node start;
     private Node end;
+    private Node current;
     private ArrayList<Node> route;
     private int length;
     private int stepsLeft;
     private boolean done;
     private int distanceToNextNode;
     private int lengthTravelled;
-    private Node current;
-
+    
+    /**
+     * Constructor takes in starting and end node of path
+     */
     public Path(Node start, Node end){
         this.start = start;
         this.end = end;
@@ -47,7 +59,7 @@ public class Path
     public int stepsLeft() { return this.stepsLeft;}
 
     public void setStepsLeft(int stepsLeft){this.stepsLeft = stepsLeft; }
-    
+
     public int getLengthTravelled() {return this.lengthTravelled;}
 
     public void setLengthTravelled(int steps) { this.lengthTravelled = steps;}
@@ -56,13 +68,15 @@ public class Path
 
     public boolean done() {return this.done;}
 
-    public void setDone(Boolean value){
-        this.done = value;
-    }
+    public void setDone(Boolean value){ this.done = value;}
 
     public Node start() {return this.start;}
 
     public Node end() { return this.end;}
+    
+    /**
+     * Method returns the next node in the route
+     */
 
     public Node nextNode(){
         if(this.route.size() > 1){
@@ -70,7 +84,11 @@ public class Path
             return this.route.get(indexCurrent +1);}
         return this.start;
     }
-
+    
+    /**
+     * Method goes through the route to calculate length 
+     * of path by summing the weights of all edges.
+     */
     public void findLength(){
         int res = 0;
         for(int i=0; i<this.route.size() -1; i++){
@@ -81,11 +99,16 @@ public class Path
         this.length = res;
         this.stepsLeft = res;
     }
-
+    
+    /**
+     * Method finds the total length needed to go the next node
+     */
     public int totalLengthToNextNode(){
         int result = 0;
         int indexCurrent = this.route.indexOf(this.current);
-
+        
+        // If path has more than one node in route, work through the list to 
+        // the node after current
         if(this.route.size() >1){
             for(int i = 0; i<=indexCurrent; i++){
                 Node start = this.route.get(i);
@@ -95,16 +118,24 @@ public class Path
         }
         return result;
     }
-
+    
+    /**
+     * Method finds length to the previous node of current
+     */
     public int lengthToPrevNode(){
         int indexCurrent = this.route.indexOf(this.current);
+        // if current node is not starting node
         if(indexCurrent != 0){
             Node prev = this.route.get(indexCurrent - 1);
             return this.current.getEdge(prev).weight();
         }
         return 0;
     }
-
+    
+    /**
+     * Method updates the distance to the next node in route
+     * by calculating difference between length to next node and length travelled
+     */
     public void updateDistanceNextNode(){
         //if(!this.current.equals(this.end)){
         this.distanceToNextNode = this.totalLengthToNextNode() - this.lengthTravelled;
@@ -113,26 +144,39 @@ public class Path
         //this.distanceToNextNode = this.stepsLeft;
         //}
     }
-
+    
+    /**
+     * Method updates position of a player on path 
+     * by updating the current node
+     */
     public void updatePositionOnPath(){
         this.lengthTravelled = this.length - this.stepsLeft;
+        
+        // If length travelled is greater than total length to next node
         if(this.lengthTravelled >= this.totalLengthToNextNode()){
             int indexCurrent = this.route.indexOf(current);
-            Node next = this.route.get(indexCurrent + 1);
+            Node next = this.route.get(indexCurrent + 1);   // Set current to next node on route
             this.current = next;
         }
 
     }
-
-    public ArrayList<Node> pathAfterCurrent(){
+    
+    /**
+     * Method returns a list of nodes on the path after current.
+     * Used for updating players information in player class
+     */
+    public ArrayList<Node> routeAfterNode(Node node){
         ArrayList<Node> result = new ArrayList<Node>();
-        int indexCurrent = this.route.indexOf(this.current);
-        for(int i = indexCurrent+1; i<this.route.size(); i++){
+        int indexNode = this.route.indexOf(node);
+        for(int i = indexNode+1; i<this.route.size(); i++){
             result.add(route.get(i));
         }
         return result;
     }
-
+    
+    /**
+     * Method copies a path information to this path
+     */
     public void updatePath(Path newPath){
         this.route.clear();
         for(Node node: newPath.route()){
@@ -141,7 +185,10 @@ public class Path
         this.length = newPath.length();
         this.stepsLeft = newPath.length();
     }
-
+    
+    /**
+     * Method prints information about this path
+     */
     public void print(){
         System.out.print("Current path: ");
         for(Node node: route){
