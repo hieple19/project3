@@ -5,10 +5,14 @@ import java.util.*;
  * that chooses the first neighbor of the current node
  *
  * @author HiepLe
- * @version (a version number or a date)
+ * @version 04/05/2018
  */
 public class PlayerFirst extends Player{
-
+    
+    /**
+     * Constructor takes in starting node and graph similar to parent
+     * A new path is then created
+     */
     public PlayerFirst(Node startingNode, Graph graph){
         super(startingNode, graph);
         this.newPath();
@@ -18,16 +22,23 @@ public class PlayerFirst extends Player{
         super(startingNode, graph);
         this.newPath();
     }
-
+    
+    /**
+     * Method finds the next node to head towards
+     * The next node is the first unvisited neighbor of the current node
+     */
     public Node findNext(){
         for(Node neighbor: this.current.getNeighbors()){
             if(!this.visited.contains(neighbor)){
-                return neighbor;
+                return neighbor;        // Return the first unvisited neighbor
             }
         }
         return null;
     }
-
+    
+    /**
+     * Method initializes and update new path to the player's current node
+     */
     public void updateNewPath(){
         Node destination = this.findNext();  
         this.currentPath = new Path(this.current, destination);

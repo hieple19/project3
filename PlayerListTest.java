@@ -7,11 +7,14 @@ import org.junit.Test;
 /**
  * The test class PlayerListTest.
  *
- * @author  (your name)
- * @version (a version number or a date)
+ * @author  Hiep Le
+ * @version 05/04/2018
  */
 public class PlayerListTest
-{
+{   
+    /**
+     * Method tests if players are added appropriately
+     */
     @Test
     public void playerListTest(){
         Graph graph = new Graph(10,"test.txt","testConfigSmall.txt");

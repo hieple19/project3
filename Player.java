@@ -42,7 +42,6 @@ public abstract class Player implements Comparable
         this.visited = new ArrayList<Node>();
         this.exitNodesInRange = new ArrayList<Node>();
         this.visited.add(current);
-        this.current.print();
         this.exitMaze = false;
     }
 
@@ -55,7 +54,6 @@ public abstract class Player implements Comparable
         this.visited = new ArrayList<Node>();
         this.exitNodesInRange = new ArrayList<Node>();
         this.visited.add(current);
-        this.current.print();
         this.exitMaze = false;
     }
 
@@ -176,7 +174,7 @@ public abstract class Player implements Comparable
                 this.newPath();
             }
         }
-        this.printPosition();
+        //this.printPosition();
 
     }
 
@@ -204,23 +202,32 @@ public abstract class Player implements Comparable
             this.currentPath.setStepsLeft(stepsLeftOnPath);
             this.currentPath.updatePositionOnPath();
             this.currentPath.updateDistanceNextNode();
-            
+
             // Update visited list and checks 
             if(this.current.getNumber() != this.currentPath.current().getNumber()){
+
+
+                // Move through route of path and add nodes passed through
+                // End when reach current position on path
+
                 this.visited.add(this.currentPath.current());
                 this.current = this.currentPath.current();
-                // Once we reach a different node, check for exit nodes
-                // If exit node is in range, 
+
+                /*
+                 * Once we reach a different node, check for exit nodes
+                 * If exit node is in range, return to create new path to exit
+                 */
                 if(checkExitInRange()){
-                    this.extraSteps = steps - this.currentPath.lengthToPrevNode();
+                    // Extra steps is equal to length to 
+                    this.extraSteps = this.currentPath.getLengthTravelled() - this.currentPath.lengthToCurrentNode();
                     return;
                 }
 
             }
 
-            this.extraSteps = 0;
+            this.extraSteps = 0;    // Reset extra steps
         }
-        this.checkExit();
+        this.checkExit();           // Check if exit node is within limit
     }
 
     /**
@@ -256,6 +263,7 @@ public abstract class Player implements Comparable
     public void printPosition(){
         System.out.println();
         if(!this.exitMaze){
+            System.out.println(this);
             System.out.println("Current Node " + this.current.getNumber());
             System.out.println("Number of nodes visited " + this.visited.size());
             System.out.println(this.visited);
@@ -272,7 +280,7 @@ public abstract class Player implements Comparable
         System.out.println("------");
         System.out.println();
     }
-    
+
     /**
      * Method compareTo provides a basis for comparing two players
      * Firstly, by number of rounds needed to exit maze. Then by

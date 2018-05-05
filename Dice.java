@@ -1,16 +1,24 @@
 import java.util.*;
 
 /**
- * Write a description of class Dice here.
+ * Class Dice creates objects that generates a random of a fixed range
+ * similar to how a dice works 
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Hiep Le
+ * @version 05/04/
  */
 public class Dice
-{
+{   
+    /**
+     * Class has a random object to generate a random value as well
+     * as a max value variable 
+     */
     private Random random; 
     private int maxValue;
-
+    
+    /**
+     * Constructor takes in max value of number generated 
+     */
     public Dice(int maxValue){
         this.random = new Random();
         this.maxValue = maxValue;
@@ -22,6 +30,7 @@ public class Dice
     }
 
     public int rollDice(){
-        return this.random.nextInt(maxValue) + 1;
+        int next =  this.random.nextInt(maxValue) + 1;        
+        return next;
     }
 }

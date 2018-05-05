@@ -7,11 +7,14 @@ import org.junit.Test;
 /**
  * The test class PlayerShortestTest.
  *
- * @author  (your name)
- * @version (a version number or a date)
+ * @author  Hiep Le
+ * @version 05/04/2018
  */
 public class PlayerShortestTest
-{
+{   
+    /**
+     * Method test if findNewPath() works to find nearest unvisited node
+     */
     @Test
     public void findNewPath(){
         Graph graph = new Graph(5,"testBig.txt", "testConfig3.txt");  
@@ -27,13 +30,13 @@ public class PlayerShortestTest
 
         player.traversePath(2);
         player.newPath();
-        expected = graph.shortestPath(6,5); // 6 to 4 to 5
+        expected = graph.shortestPath(6,5); // 6 to 4 to 5 - 4 already visited 
         assertArrayEquals("Nearest node of 6 is 5", expected.route().toArray(),player.currentPath.route().toArray());
 
         graph = new Graph(0,"testBig.txt", "testConfig3.txt");  
         player = new PlayerShortest(graph.getNode(4), graph);
         player.newPath();
-        expected = graph.shortestPath(4,3);
+        expected = graph.shortestPath(4,3); // No node within limit - find first neighbor
         assertArrayEquals("First neighbor of 4 is 3", expected.route().toArray(),player.currentPath.route().toArray());
 
     }

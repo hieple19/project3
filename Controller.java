@@ -1,57 +1,45 @@
 import java.util.*;
 
+/**
+ * Class Controller takes in user's parameters and execute the game.
+ *
+ * @author HiepLe
+ * @version 04/05/2018
+ */
 public class Controller{
     public static void main(String[] args){
-        Graph graph = new Graph(10,"test.txt","example2.txt");
+        int limit = Integer.parseInt(args[0]);
+        Graph graph = new Graph(limit,args[5],args[6]); // Read limit and files
         graph.print();
-        System.out.println("Playing ");
-        Dice dice = new Dice(6);
-        /*PlayerShortest player1 = new PlayerShortest(graph.getStartingNode(),graph);
-        //PlayerRandom player1 = new PlayerRandom(graph.getStartingNode(),graph);
-        //PlayerFirst player1 = new PlayerFirst(graph.getStartingNode(),graph);
-        player1.setDice(dice);
-        HashMap<Node, Path> allPaths = graph.shortestPaths(6);
-        Set<Map.Entry<Node,Path>> entries = allPaths.entrySet();
-        Iterator itr = entries.iterator();
-        System.out.println();
-        while(itr.hasNext()){
-        Map.Entry<Node,Path> next = (Map.Entry<Node, Path>)itr.next();
-        Node entry = (Node)next.getKey();
-        Path path = (Path) next.getValue();
-        entry.print();
-        path.print();
-        System.out.println();
+        int maxDice = Integer.parseInt(args[4]);
+        Dice dice = new Dice(maxDice);                  // Set dice and max value
 
-        }*/
-        /*System.out.println("PLAYERS");
-        for(int i = 0; i<11; i++){
-        System.out.println("STEP " + (i+1));
-        player1.oneStep();
-        }*/
-        //Graph graph = new Graph(10,"test.txt","example2.txt");
-        //Dice dice = new Dice(6, 123);
-        //Dice dice = new Dice(6);
-        PlayerList playerList = new PlayerList(1,1,1,graph);
+        int noPlayerFirst = Integer.parseInt(args[1]);
+        int noPlayerRandom = Integer.parseInt(args[2]);
+        int noPlayerShortest = Integer.parseInt(args[3]);   // Read number of players of each type
+
+        PlayerList playerList = new PlayerList(noPlayerFirst,noPlayerRandom,noPlayerShortest,graph);
         playerList.setDice(dice);
 
         Scanner scanner = new Scanner(System.in);
         while(true){
-            if(playerList.checkAllExit()){
+            if(playerList.checkAllExit()){  // If all players have exit break loop
                 break;
             }
-            display();
+            display();                       // Else display instructions and read input
             String line = scanner.nextLine().toLowerCase().trim();
+            System.out.println();
             if(line.equals("i")){
-                playerList.oneStep();
+                playerList.oneStep();        // Advance one round
             }
             else if(line.equals("c")){
-                playerList.skipToCompletion();
+                playerList.skipToCompletion();  // Skip to completion and break loop
                 break;
             }
-            else if(line.equals("p")){
+            else if(line.equals("p")){          // Print current position
                 playerList.printPosition();
             }
-            else if(line.equals("x")){
+            else if(line.equals("x")){          // Quit program
                 break;
             }
             else{
@@ -59,12 +47,13 @@ public class Controller{
             }
         }
         System.out.println();
-        System.out.println("Final Position");
+        System.out.println("Final Position");   // Print final position when all done
         playerList.printPosition();
 
     }
 
     public static void display(){
+        System.out.println();
         System.out.println("Instructions");
         System.out.println("Type 'i' to advance one round");
         System.out.println("Type 'x' to exit program");

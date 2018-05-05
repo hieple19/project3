@@ -7,11 +7,14 @@ import org.junit.Test;
 /**
  * The test class DiceTest.
  *
- * @author  (your name)
- * @version (a version number or a date)
+ * @author  Hiep Le
+ * @version 05/04/18
  */
 public class DiceTest
-{
+{   
+    /**
+     * Method test if dice rolls a full range of expected values
+     */
     @Test
     public void rollDiceTest(){
         Dice dice = new Dice(5,123);

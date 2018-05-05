@@ -95,6 +95,93 @@ public class Graph{
     public Node getStartingNode() { return this.startingNode;}
 
     /**
+     * Method adds a node to map of nodes, with the node value as key 
+     * @param  key
+     * @return true if node is not already present
+     */
+    public boolean addNode(Integer key){
+        if(this.nodes.containsKey(key)){
+            return false;
+        }
+        Node newNode = new Node(key);
+        this.nodes.put(key,newNode);
+        return true;
+    }
+
+    /**
+     * Method checks if node is present in map by 
+     * checking the key 
+     * @param key 
+     * @return true if node is present
+     */
+    public boolean hasNode(Integer key){
+        return this.nodes.containsKey(key);
+    }
+
+    /**
+     * Method checks if an exit node is within limit of a node
+     * @param node current
+     * @return true if an exit node is within limit
+     */
+
+    public boolean exitWithinNode(Node current){
+        HashMap<Integer,Node> nodesWithinLimit = this.withinLimit(current);
+        for(Integer key: this.exitNodes.keySet()){
+            if(nodesWithinLimit.containsKey(key)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Method adds a weighted edge between two nodes.
+     * If edge is already present, weight is changed to weight in add edge
+     * @param key1
+     * @return true if both nodes are present.
+     */
+    public boolean addEdge(Integer key1, Integer key2, Integer weight){
+        if(this.hasNode(key1) && this.hasNode(key2)){   // Check that graph has both nodes
+            Node node1 = this.nodes.get(key1);
+            Node node2 = this.nodes.get(key2);          
+            if(node1.hasEdge(node2)){
+                if(weight != 0){
+                    node1.getEdge(node2).setWeight(weight); // Change weight of existing edge
+                    node2.getEdge(node1).setWeight(weight);
+                }
+            }
+            else{
+                Edge edgeTo1 = new Edge(node1,weight);  // Add edge
+                node2.addEdge(edgeTo1);
+                Edge edgeTo2 = new Edge(node2,weight);
+                node1.addEdge(edgeTo2);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method returns an edge betwteen two nodes
+     * @param Node start and end
+     */
+    public Edge getEdge(Node start, Node end){
+        if(start.hasEdge(end)){
+            return start.getEdge(end);
+        }
+        return null;
+    }
+
+    /**
+     * Similar method but takes integer as parameters
+     */
+    public Edge getEdge(Integer key1, Integer key2){
+        Node start = this.nodes.get(key1);
+        Node end = this.nodes.get(key2);
+        return this.getEdge(start,end);
+    }
+
+    /**
      * Method finds the node with the shortest path/ nearest node to the node 
      * that is being processed in Dijkstra's algorithm 
      * @param map of all paths
@@ -228,100 +315,6 @@ public class Graph{
     }
 
     /**
-     * Method adds a node to map of nodes, with the node value as key 
-     * @param  key
-     * @return true if node is not already present
-     */
-    public boolean addNode(Integer key){
-        if(this.nodes.containsKey(key)){
-            return false;
-        }
-        Node newNode = new Node(key);
-        this.nodes.put(key,newNode);
-        return true;
-    }
-
-    /**
-     * Method checks if node is present in map by 
-     * checking the key 
-     * @param key 
-     * @return true if node is present
-     */
-    public boolean hasNode(Integer key){
-        return this.nodes.containsKey(key);
-    }
-
-    /**
-     * Method checks if an exit node is within limit of a node
-     * @param node current
-     * @return true if an exit node is within limit
-     */
-
-    public boolean exitWithinNode(Node current){
-        HashMap<Integer,Node> nodesWithinLimit = this.withinLimit(current);
-        for(Integer key: this.exitNodes.keySet()){
-            if(nodesWithinLimit.containsKey(key)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Method adds a weighted edge between two nodes.
-     * If edge is already present, weight is changed to weight in add edge
-     * @param key1
-     * @return true if both nodes are present.
-     */
-    public boolean addEdge(Integer key1, Integer key2, Integer weight){
-        if(this.hasNode(key1) && this.hasNode(key2)){   // Check that graph has both nodes
-            Node node1 = this.nodes.get(key1);
-            Node node2 = this.nodes.get(key2);          
-            if(node1.hasEdge(node2)){
-                node1.getEdge(node2).setWeight(weight); // Change weight of existing edge
-                node2.getEdge(node1).setWeight(weight);
-            }
-            else{
-                Edge edgeTo1 = new Edge(node1,weight);  // Add edge
-                node2.addEdge(edgeTo1);
-                Edge edgeTo2 = new Edge(node2,weight);
-                node1.addEdge(edgeTo2);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Method returns an edge betwteen two nodes
-     * @param Node start and end
-     */
-     public Edge getEdge(Node start, Node end){
-        if(start.hasEdge(end)){
-            return start.getEdge(end);
-        }
-        return null;
-    }
-    
-    /**
-     * Similar method but takes integer as parameters
-     */
-    public Edge getEdge(Integer key1, Integer key2){
-        Node start = this.nodes.get(key1);
-        Node end = this.nodes.get(key2);
-        return this.getEdge(start,end);
-    }
-
-   
-    /*public ArrayList<Node> neighbors(Integer k){
-        if(this.hasNode(k)){
-            Node node = this.nodes.get(k);
-            return node.getNeighbors();
-        }
-        return null;
-    }*/
-    
-    /**
      * Method prints information about the graph such as all nodes and exit nodes
      */
     public void print(){
@@ -331,7 +324,7 @@ public class Graph{
         for(Node node: this.exitNodes.values()){
             System.out.println("Exit Node " + node);
         }
-        System.out.println("Node " + startingNode);      
+        System.out.println("Starting Node " + this.startingNode.getNumber());      
         System.out.println("Limit " + this.limit);
     }
 

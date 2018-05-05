@@ -26,7 +26,7 @@ public class Path
     private boolean done;
     private int distanceToNextNode;
     private int lengthTravelled;
-    
+
     /**
      * Constructor takes in starting and end node of path
      */
@@ -73,7 +73,7 @@ public class Path
     public Node start() {return this.start;}
 
     public Node end() { return this.end;}
-    
+
     /**
      * Method returns the next node in the route
      */
@@ -84,7 +84,7 @@ public class Path
             return this.route.get(indexCurrent +1);}
         return this.start;
     }
-    
+
     /**
      * Method goes through the route to calculate length 
      * of path by summing the weights of all edges.
@@ -99,14 +99,14 @@ public class Path
         this.length = res;
         this.stepsLeft = res;
     }
-    
+
     /**
      * Method finds the total length needed to go the next node
      */
     public int totalLengthToNextNode(){
         int result = 0;
         int indexCurrent = this.route.indexOf(this.current);
-        
+
         // If path has more than one node in route, work through the list to 
         // the node after current
         if(this.route.size() >1){
@@ -118,20 +118,26 @@ public class Path
         }
         return result;
     }
-    
+
     /**
-     * Method finds length to the previous node of current
+     * Method finds length to the current node
      */
-    public int lengthToPrevNode(){
+    public int lengthToCurrentNode(){
+        int result = 0;
         int indexCurrent = this.route.indexOf(this.current);
-        // if current node is not starting node
-        if(indexCurrent != 0){
-            Node prev = this.route.get(indexCurrent - 1);
-            return this.current.getEdge(prev).weight();
+
+        // If path has more than one node in route, work through the list to 
+        // the node after current
+        if(this.route.size() >1){
+            for(int i = 0; i<indexCurrent; i++){
+                Node start = this.route.get(i);
+                Node end = this.route.get(i+1);
+                result += start.getEdge(end).weight();
+            }
         }
-        return 0;
+        return result;
     }
-    
+
     /**
      * Method updates the distance to the next node in route
      * by calculating difference between length to next node and length travelled
@@ -144,14 +150,14 @@ public class Path
         //this.distanceToNextNode = this.stepsLeft;
         //}
     }
-    
+
     /**
      * Method updates position of a player on path 
      * by updating the current node
      */
     public void updatePositionOnPath(){
         this.lengthTravelled = this.length - this.stepsLeft;
-        
+
         // If length travelled is greater than total length to next node
         if(this.lengthTravelled >= this.totalLengthToNextNode()){
             int indexCurrent = this.route.indexOf(current);
@@ -160,7 +166,7 @@ public class Path
         }
 
     }
-    
+
     /**
      * Method returns a list of nodes on the path after current.
      * Used for updating players information in player class
@@ -173,7 +179,7 @@ public class Path
         }
         return result;
     }
-    
+
     /**
      * Method copies a path information to this path
      */
@@ -185,7 +191,7 @@ public class Path
         this.length = newPath.length();
         this.stepsLeft = newPath.length();
     }
-    
+
     /**
      * Method prints information about this path
      */
@@ -196,7 +202,7 @@ public class Path
         }
         System.out.print(", Length: " + this.length);
 
-        System.out.print(", Steps Left: " + this.stepsLeft + ", done? " + this.done + " \n");
+        System.out.print(", Steps Left: " + this.stepsLeft + " \n");
 
         System.out.print("Distance to next node (Node " + this.nextNode().getNumber() + ") " + this.distanceToNextNode + " \n");
     }

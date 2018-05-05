@@ -1,2 +1,2 @@
 start: 2
-exit: 10
+exit: 3
