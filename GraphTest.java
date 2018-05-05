@@ -78,6 +78,7 @@ public class GraphTest
      */
     @Test
     public void testWithinLimit(){
+        // Limit is 0
         Graph graph = new Graph(0,"test.txt", "testConfig.txt");   
         HashMap<Integer,Node> withinLimit = graph.withinLimit(graph.getNode(5));
         Integer[] empty = new Integer[withinLimit.size()];
@@ -88,7 +89,8 @@ public class GraphTest
         }
         Integer[]emptyExpected = {5};  // only 5 is within 5 steps of itselflucs
         assertArrayEquals("Within 5 steps of 5", emptyExpected,empty);
-
+        
+        // Limit is 10
         graph = new Graph(10,"test.txt", "testConfig.txt");   
         withinLimit = graph.withinLimit(graph.getNode(3));
         Integer[] results = new Integer[withinLimit.size()];
@@ -145,7 +147,7 @@ public class GraphTest
         for(Path path: shortestPaths.values()){
             shortestDistances.add(path.length());
         }
-        Integer[] expected3 = {0,7,8,9,9,12};
+        Integer[] expected3 = {0,7,8,9,9,12}; // Shortest distances from 3
         Collections.sort(shortestDistances);
         assertArrayEquals("Shortest from 1", expected3,shortestDistances.toArray());
     }

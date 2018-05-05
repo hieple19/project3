@@ -10,7 +10,7 @@ import java.util.*;
 public class PlayerFirst extends Player{
     
     /**
-     * Constructor takes in starting node and graph similar to parent
+     * Constructor takes in starting node and graph
      * A new path is then created
      */
     public PlayerFirst(Node startingNode, Graph graph){

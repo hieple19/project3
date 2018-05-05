@@ -13,7 +13,7 @@ public class Path
      * Class has instance variables that keep track of the 
      * start, end and current nodes. It also has instance variable to
      * keep track of the route in the form of a list of nodes
-     * There are other int variables that records the length of the path and
+     * There are other variables that records the length of the path and
      * the number of steps left to traverse
      * 
      */
@@ -140,15 +140,11 @@ public class Path
 
     /**
      * Method updates the distance to the next node in route
-     * by calculating difference between length to next node and length travelled
+     * by calculating difference between length to next node
+     * and length travelled
      */
     public void updateDistanceNextNode(){
-        //if(!this.current.equals(this.end)){
         this.distanceToNextNode = this.totalLengthToNextNode() - this.lengthTravelled;
-        //}
-        //else{
-        //this.distanceToNextNode = this.stepsLeft;
-        //}
     }
 
     /**

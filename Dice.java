@@ -5,7 +5,7 @@ import java.util.*;
  * similar to how a dice works 
  *
  * @author Hiep Le
- * @version 05/04/
+ * @version 05/04/18
  */
 public class Dice
 {   

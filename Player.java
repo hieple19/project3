@@ -206,7 +206,6 @@ public abstract class Player implements Comparable
             // Update visited list and checks 
             if(this.current.getNumber() != this.currentPath.current().getNumber()){
 
-
                 // Move through route of path and add nodes passed through
                 // End when reach current position on path
 
@@ -222,7 +221,6 @@ public abstract class Player implements Comparable
                     this.extraSteps = this.currentPath.getLengthTravelled() - this.currentPath.lengthToCurrentNode();
                     return;
                 }
-
             }
 
             this.extraSteps = 0;    // Reset extra steps
@@ -248,7 +246,6 @@ public abstract class Player implements Comparable
             this.currentPath = this.pathToNearestExit(); // Set path to path to nearest node
             this.currentPath.findLength();
             this.currentPath.setDone(false);    
-
             this.currentPath.updateDistanceNextNode(); // Update distance to next node of path's route
         }
         else{

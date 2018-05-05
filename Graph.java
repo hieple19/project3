@@ -96,7 +96,7 @@ public class Graph{
 
     /**
      * Method adds a node to map of nodes, with the node value as key 
-     * @param  key
+     * @param  Integer key
      * @return true if node is not already present
      */
     public boolean addNode(Integer key){
@@ -111,7 +111,7 @@ public class Graph{
     /**
      * Method checks if node is present in map by 
      * checking the key 
-     * @param key 
+     * @param Integer key 
      * @return true if node is present
      */
     public boolean hasNode(Integer key){
@@ -145,8 +145,9 @@ public class Graph{
             Node node1 = this.nodes.get(key1);
             Node node2 = this.nodes.get(key2);          
             if(node1.hasEdge(node2)){
+                // Change weight of existing edge if new weight is not 0
                 if(weight != 0){
-                    node1.getEdge(node2).setWeight(weight); // Change weight of existing edge
+                    node1.getEdge(node2).setWeight(weight); 
                     node2.getEdge(node1).setWeight(weight);
                 }
             }
@@ -182,10 +183,10 @@ public class Graph{
     }
 
     /**
-     * Method finds the node with the shortest path/ nearest node to the node 
+     * Method finds the node with the shortest path to the node 
      * that is being processed in Dijkstra's algorithm 
      * @param map of all paths
-     * @retun node 
+     * @retun node that has shortest path 
      */
     public Node minNode(HashMap<Node, Path> allPaths){
         Node minNode = null; 
@@ -211,7 +212,7 @@ public class Graph{
     }
 
     /**
-     * Method finds shortest paths to all nodes in graphfrom one source node
+     * Method finds shortest paths to all nodes in graph from one source node
      * using Dijkstra's algorithms
      * @param Node
      * @return Map of shortest paths with Node as keys and Path as values
