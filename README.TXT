@@ -3,7 +3,8 @@ AUTHOR: Hiep Le
 
 - To run the program, the user needs to call the main 
 method on the Controller class 
-- The following parameters and passed in the following order
+- The following parameters are required and passed in the
+ following order
 		- Limit value
 		- Number of players of First type
 		- Number of players of Random type
@@ -12,6 +13,8 @@ method on the Controller class
 		- Graph filename ("default.txt")
 		- Starting and exit nodes filename ("config.txt")
 		
+E.g. java Controller 10 1 1 1 5 default.txt config.txt
+
 - Once the program runs, the user will be given instructions
 on how to proceed. The program accepts the following
 commands:

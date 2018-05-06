@@ -10,7 +10,7 @@ public class Controller{
     public static void main(String[] args){
         int limit = Integer.parseInt(args[0]);
         Graph graph = new Graph(limit,args[5],args[6]); // Read limit and files
-        graph.print();
+        //graph.print();
         int maxDice = Integer.parseInt(args[4]);
         Dice dice = new Dice(maxDice);                  // Set dice and max value
 

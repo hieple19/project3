@@ -5,7 +5,7 @@ import java.util.*;
  * @author Hiep Le
  * @version 05/04/2018
  */
-public abstract class Player implements Comparable
+public abstract class Player implements Comparable<Player>
 {   
     /**
      * Class has instance variables that keep track of 
@@ -283,8 +283,7 @@ public abstract class Player implements Comparable
      * Firstly, by number of rounds needed to exit maze. Then by
      * number of steps and lastky by number of nodes visited.
      */
-    public int compareTo(Object o){
-        Player p = (Player) o;
+    public int compareTo(Player p){
         if(this.totalRounds != p.totalRounds){
             Integer thisCount = (Integer) this.totalRounds;
             Integer pCount = (Integer) p.totalRounds;

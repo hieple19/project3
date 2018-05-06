@@ -8,7 +8,7 @@ import java.util.*;
  * @ 05/03/2018
  */
 
-public class Node implements Comparable{
+public class Node implements Comparable<Node>{
     /**
      * Class has instance variables to keep track of the node number
      * and the list of the edges of the node
@@ -105,8 +105,7 @@ public class Node implements Comparable{
     /**
      * Method compareTo compares two node objects using their values
      */
-    public int compareTo(Object o){
-        Node k = (Node) o;
+    public int compareTo(Node k){
         Integer thisValue = this.number;
         Integer otherValue = k.getNumber();
         return thisValue.compareTo(otherValue);
